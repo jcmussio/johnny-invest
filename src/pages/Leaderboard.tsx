@@ -23,7 +23,7 @@ const users = [
   },
   {
     id: 4,
-    name: 'Carlos Tech',
+    name: 'Carlos Investidor',
     xp: 1250,
     avatar: 'https://img.usecurling.com/ppl/medium?gender=male&seed=4',
     isMe: true,
@@ -39,54 +39,58 @@ const users = [
 export default function Leaderboard() {
   return (
     <div className="flex flex-col items-center">
-      <div className="flex flex-col items-center mb-8">
-        <Shield className="w-24 h-24 text-duo-yellow fill-duo-yellow animate-bounce" />
-        <h1 className="text-2xl font-extrabold text-duo-text mt-4">
-          Liga Bronze
+      <div className="flex flex-col items-center mb-10 text-center">
+        <Shield className="w-24 h-24 text-silver-shade fill-silver-shade animate-bounce drop-shadow-md" />
+        <h1 className="text-3xl font-extrabold text-navy mt-6">
+          Liga Investidor
         </h1>
-        <p className="text-slate-400">
-          Os 10 melhores avançam para a Liga Prata
+        <p className="text-slate-500 font-medium mt-2 max-w-md">
+          Os 10 melhores alunos avançam para a Liga Elite
         </p>
       </div>
 
-      <div className="w-full flex flex-col border-2 border-duo-gray rounded-2xl overflow-hidden">
+      <div className="w-full flex flex-col border-2 border-silver-light rounded-lg overflow-hidden bg-white shadow-sm">
         {users.map((user, index) => (
           <div
             key={user.id}
             className={cn(
-              'flex items-center p-4 hover:bg-slate-50 transition-colors',
+              'flex items-center p-5 hover:bg-slate-50 transition-colors',
               user.isMe
-                ? 'bg-blue-50/50 border-l-4 border-l-duo-blue'
-                : 'border-b border-duo-gray last:border-0',
+                ? 'bg-blue-50/50 border-l-4 border-l-navy'
+                : 'border-b border-silver-light last:border-0',
             )}
           >
-            <div className="w-8 font-bold text-slate-400">{index + 1}</div>
-            <Avatar className="w-10 h-10 border-2 border-duo-gray mr-4">
+            <div className="w-10 font-bold text-slate-400 text-lg">
+              {index + 1}
+            </div>
+            <Avatar className="w-12 h-12 border-2 border-silver-light mr-4">
               <AvatarImage src={user.avatar} />
               <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
             </Avatar>
             <div className="flex-1">
               <p
                 className={cn(
-                  'font-bold',
-                  user.isMe ? 'text-duo-blue' : 'text-duo-text',
+                  'font-bold text-lg',
+                  user.isMe ? 'text-navy' : 'text-slate-700',
                 )}
               >
                 {user.name}
               </p>
             </div>
-            <div className="font-bold text-slate-600">{user.xp} XP</div>
+            <div className="font-bold text-slate-600 text-lg">
+              {user.xp} PTS
+            </div>
           </div>
         ))}
 
-        <div className="flex items-center justify-center p-4 border-t-2 border-duo-green border-dashed bg-green-50/30">
-          <span className="text-xs font-bold text-duo-green uppercase tracking-widest">
+        <div className="flex items-center justify-center p-5 border-t-2 border-emerald border-dashed bg-emerald/5">
+          <span className="text-xs font-bold text-emerald uppercase tracking-widest">
             Zona de Promoção
           </span>
         </div>
 
-        <div className="p-4 flex items-center justify-center text-slate-400 text-sm">
-          ... e mais 25 participantes
+        <div className="p-5 flex items-center justify-center text-slate-400 text-sm font-medium">
+          ... e mais 25 investidores
         </div>
       </div>
     </div>

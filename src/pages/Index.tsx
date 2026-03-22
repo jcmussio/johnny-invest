@@ -1,156 +1,116 @@
-import { cn } from '@/lib/utils'
+import { Link } from 'react-router-dom'
 import { Button3D } from '@/components/ui/button-3d'
-import { Star, Lock, Check } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
-import useAppStore from '@/stores/useAppStore'
-
-const units = [
-  {
-    id: 1,
-    title: 'Unidade 1',
-    description: 'O básico do básico',
-    color: 'bg-duo-green',
-    levels: [
-      { id: 1, x: 0 },
-      { id: 2, x: -40 },
-      { id: 3, x: -20 },
-      { id: 4, x: 30 },
-      { id: 5, x: 0 },
-    ],
-  },
-  {
-    id: 2,
-    title: 'Unidade 2',
-    description: 'Cumprimentos e dia a dia',
-    color: 'bg-duo-blue',
-    levels: [
-      { id: 1, x: 0 },
-      { id: 2, x: 40 },
-      { id: 3, x: 20 },
-      { id: 4, x: -30 },
-      { id: 5, x: 0 },
-    ],
-  },
-]
+import { CheckCircle2 } from 'lucide-react'
+import { Logo } from '@/components/ui/logo'
 
 export default function Index() {
-  const { state } = useAppStore()
-  const navigate = useNavigate()
-
-  const handleStartLesson = () => {
-    navigate('/lesson')
-  }
-
   return (
-    <div className="flex flex-col gap-8 pb-10">
-      {units.map((unit) => (
-        <div key={unit.id} className="flex flex-col items-center">
-          {/* Unit Header */}
-          <div
-            className={cn(
-              'w-full rounded-2xl p-4 mb-8 flex justify-between items-center text-white shadow-sm',
-              unit.color,
-            )}
+    <div className="min-h-screen bg-navy text-white font-sans overflow-x-hidden selection:bg-emerald selection:text-white pb-20 md:pb-0">
+      <header className="flex justify-between items-center p-6 max-w-6xl mx-auto">
+        <div className="flex items-center gap-3">
+          <Logo className="w-12 h-12" />
+          <span className="text-2xl font-bold tracking-tight text-silver hidden sm:inline-block">
+            Johnny Invest
+          </span>
+        </div>
+        <Link to="/learn">
+          <Button3D
+            variant="outline"
+            className="text-silver border-silver hover:bg-navy-shade px-8"
           >
-            <div>
-              <h2 className="text-2xl font-extrabold tracking-tight">
-                {unit.title}
-              </h2>
-              <p className="text-white/90 font-medium">{unit.description}</p>
-            </div>
-            <Button3D variant="secondary" size="sm" className="h-10 border-b-2">
-              GUIA
-            </Button3D>
-          </div>
+            Entrar
+          </Button3D>
+        </Link>
+      </header>
 
-          {/* Path */}
-          <div className="flex flex-col gap-6 relative w-full items-center">
-            {unit.levels.map((level, index) => {
-              const levelIdFull = `${unit.id}-${level.id}`
-              const isCompleted = state.completedLevels.includes(levelIdFull)
-              const isCurrent =
-                !isCompleted && state.unlockedLevels.includes(levelIdFull)
-              const isLocked = !isCompleted && !isCurrent
+      <main className="max-w-4xl mx-auto px-6 py-16 md:py-24 text-center flex flex-col items-center">
+        <span className="bg-emerald/20 text-emerald border border-emerald px-4 py-1.5 rounded-full text-sm font-bold uppercase tracking-widest mb-8">
+          Oferta de Lançamento
+        </span>
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 leading-tight text-white">
+          Aprenda Opções Como Você Aprende um Idioma — Progressivo, Intuitivo e
+          Viciante
+        </h1>
+        <p className="text-lg md:text-xl text-silver mb-10 max-w-2xl leading-relaxed">
+          Aulas curtas, prática diária, progresso real. Domine o mercado
+          financeiro com a metodologia que realmente funciona.
+        </p>
+        <Link to="/learn" className="w-full sm:w-auto">
+          <Button3D
+            variant="super"
+            size="lg"
+            className="w-full sm:w-80 text-lg h-16 rounded-xl shadow-2xl shadow-emerald/20"
+          >
+            Começar Agora - R$ 297,00
+          </Button3D>
+        </Link>
+      </main>
 
-              return (
-                <div
-                  key={level.id}
-                  className="relative z-10"
-                  style={{ transform: `translateX(${level.x}px)` }}
-                >
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <button
-                        className={cn(
-                          'w-20 h-20 rounded-full flex items-center justify-center border-b-8 transition-transform active:translate-y-1 active:border-b-0 outline-none',
-                          isCompleted
-                            ? 'bg-duo-yellow border-yellow-600'
-                            : isCurrent
-                              ? 'bg-duo-green border-duo-green-shade animate-float'
-                              : 'bg-gray-200 border-gray-300 pointer-events-none',
-                        )}
-                      >
-                        {isCompleted ? (
-                          <Check className="w-8 h-8 text-white stroke-[4px]" />
-                        ) : isLocked ? (
-                          <Lock className="w-8 h-8 text-gray-400" />
-                        ) : (
-                          <Star className="w-8 h-8 text-white fill-current" />
-                        )}
-
-                        {/* Crown for completed levels */}
-                        {isCompleted && (
-                          <div className="absolute -top-1 -right-1 bg-white rounded-full p-1 border-2 border-yellow-500">
-                            <div className="w-3 h-3 bg-yellow-500 rounded-full" />
-                          </div>
-                        )}
-                      </button>
-                    </PopoverTrigger>
-
-                    {!isLocked && (
-                      <PopoverContent
-                        className="w-64 p-0 border-none bg-transparent shadow-none"
-                        side="top"
-                        sideOffset={10}
-                      >
-                        <div className="bg-white rounded-2xl p-4 border-2 border-duo-gray shadow-xl text-center flex flex-col items-center gap-4 animate-fade-in-up">
-                          <div>
-                            <h3 className="font-bold text-lg text-duo-text">
-                              Nível {level.id} de {unit.levels.length}
-                            </h3>
-                            <p className="text-slate-500 text-sm">
-                              Lição {level.id}
-                            </p>
-                          </div>
-                          <Button3D fullWidth onClick={handleStartLesson}>
-                            COMEÇAR +10 XP
-                          </Button3D>
-                        </div>
-                        {/* Little triangle arrow */}
-                        <div className="w-4 h-4 bg-white border-b-2 border-r-2 border-duo-gray transform rotate-45 absolute bottom-[-8px] left-1/2 -translate-x-1/2 bg-white"></div>
-                      </PopoverContent>
-                    )}
-                  </Popover>
-
-                  {/* Mascot for Current Level */}
-                  {isCurrent && (
-                    <img
-                      src="https://img.usecurling.com/i?q=owl-cartoon&color=green&shape=hand-drawn"
-                      alt="Mascot"
-                      className="absolute -right-24 top-0 w-20 h-20 animate-bounce"
-                    />
-                  )}
-                </div>
-              )
-            })}
+      <section className="bg-navy-shade py-20 border-y border-silver/10">
+        <div className="max-w-5xl mx-auto px-6 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-12 text-white">
+            Você Tem Tudo a Ganhar
+          </h2>
+          <div className="flex flex-wrap justify-center gap-4 md:gap-6">
+            {[
+              '7 Dias de Garantia 100%',
+              'Acesso Vitalício',
+              'Conteúdo Atualizado',
+              'Suporte Direto do Johnny',
+              'Certificado de Conclusão',
+            ].map((item, i) => (
+              <div
+                key={i}
+                className="flex items-center gap-3 bg-navy px-5 py-4 rounded-xl border border-silver/20 shadow-sm transition-transform hover:-translate-y-1"
+              >
+                <CheckCircle2 className="text-emerald w-6 h-6 shrink-0" />
+                <span className="font-semibold text-silver">{item}</span>
+              </div>
+            ))}
           </div>
         </div>
-      ))}
+      </section>
+
+      <section className="py-24">
+        <div className="max-w-md mx-auto px-6">
+          <div className="bg-gradient-to-b from-silver to-silver-shade p-[2px] rounded-2xl shadow-2xl">
+            <div className="bg-navy rounded-xl p-8 text-center h-full">
+              <h3 className="text-2xl font-bold mb-2 text-white">
+                Acesso Completo
+              </h3>
+              <div className="text-silver line-through mb-2 text-lg">
+                de R$ 997,00
+              </div>
+              <div className="text-5xl font-extrabold text-white mb-8">
+                R$ 297,00
+              </div>
+              <ul className="text-left space-y-4 mb-10 text-silver">
+                <li className="flex items-center gap-3">
+                  <CheckCircle2 className="text-emerald w-5 h-5" /> Curso
+                  Completo Opções
+                </li>
+                <li className="flex items-center gap-3">
+                  <CheckCircle2 className="text-emerald w-5 h-5" /> 8 Níveis de
+                  Domínio
+                </li>
+                <li className="flex items-center gap-3">
+                  <CheckCircle2 className="text-emerald w-5 h-5" /> Gamificação
+                  e Certificados
+                </li>
+                <li className="flex items-center gap-3">
+                  <CheckCircle2 className="text-emerald w-5 h-5" /> Acesso
+                  Vitalício
+                </li>
+              </ul>
+              <Link to="/learn">
+                <Button3D variant="super" className="w-full h-14 text-lg">
+                  Comprar Agora
+                </Button3D>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }

@@ -1,13 +1,13 @@
 import * as React from 'react'
 
 interface AppState {
-  xp: number
+  xp: number // Pontos de Aprendizado
   gems: number
   hearts: number
-  streak: number
+  streak: number // Dias de Prática Consecutivos
   currentUnit: number
   currentLevel: number
-  completedLevels: string[] // e.g., "u1-l1", "u1-l2"
+  completedLevels: string[] // e.g., "1-1", "1-2"
   unlockedLevels: string[]
 }
 

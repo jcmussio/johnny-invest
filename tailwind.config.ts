@@ -26,8 +26,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Inter var', 'SF Pro Display', 'system-ui', 'sans-serif'],
-        display: ['SF Pro Display', 'Inter var', 'system-ui', 'sans-serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Inter', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: 'hsl(var(--border))',
@@ -36,32 +36,29 @@ export default {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
 
-        // Duolingo-inspired Custom Colors
-        'duo-green': {
-          DEFAULT: '#58CC02',
-          shade: '#46A302', // Darker shade for 3D effect
+        // Johnny Invest Theme
+        navy: {
+          DEFAULT: '#1a2a4a',
+          shade: '#0f192d',
         },
-        'duo-blue': {
-          DEFAULT: '#1CB0F6',
-          shade: '#1899D6',
+        silver: {
+          DEFAULT: '#c0c0c0',
+          shade: '#808080',
+          light: '#f3f4f6',
         },
-        'duo-yellow': {
-          DEFAULT: '#FFC800',
-          shade: '#D9AA00',
+        emerald: {
+          DEFAULT: '#10b981',
+          shade: '#059669',
         },
-        'duo-red': {
-          DEFAULT: '#FF4B4B',
-          shade: '#D93030',
-        },
-        'duo-purple': {
-          DEFAULT: '#CE82FF',
-          shade: '#A65CD6',
-        },
-        'duo-gray': {
-          DEFAULT: '#E5E5E5',
-          shade: '#CECECE',
-        },
-        'duo-text': '#4B4B4B',
+
+        // Fallbacks for unedited components
+        'duo-green': { DEFAULT: '#10b981', shade: '#059669' },
+        'duo-blue': { DEFAULT: '#1a2a4a', shade: '#0f192d' },
+        'duo-yellow': { DEFAULT: '#c0c0c0', shade: '#808080' },
+        'duo-red': { DEFAULT: '#ef4444', shade: '#b91c1c' },
+        'duo-purple': { DEFAULT: '#8b5cf6', shade: '#6d28d9' },
+        'duo-gray': { DEFAULT: '#e5e7eb', shade: '#d1d5db' },
+        'duo-text': '#1a2a4a',
 
         primary: {
           DEFAULT: 'hsl(var(--primary))',
@@ -103,10 +100,10 @@ export default {
         },
       },
       borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
-        '3xl': '1.5rem', // For rounded buttons
+        lg: '8px',
+        md: '6px',
+        sm: '4px',
+        '3xl': '12px',
       },
       keyframes: {
         'accordion-down': {

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { X, Heart } from 'lucide-react'
+import { X, Shield } from 'lucide-react'
 import { Progress } from '@/components/ui/progress'
 import { Button3D } from '@/components/ui/button-3d'
 import { cn } from '@/lib/utils'
@@ -11,27 +11,27 @@ const lessonData = [
   {
     id: 1,
     type: 'select',
-    question: "Como se diz 'Maçã'?",
+    question: "Como se chama uma 'Opção de Compra'?",
     options: [
       {
         id: 'a',
-        label: 'Apple',
-        image: 'https://img.usecurling.com/p/200/200?q=apple',
+        label: 'Call',
+        image: 'https://img.usecurling.com/p/200/200?q=green%20arrow%20up',
       },
       {
         id: 'b',
-        label: 'Bread',
-        image: 'https://img.usecurling.com/p/200/200?q=bread',
+        label: 'Put',
+        image: 'https://img.usecurling.com/p/200/200?q=red%20arrow%20down',
       },
       {
         id: 'c',
-        label: 'Coffee',
-        image: 'https://img.usecurling.com/p/200/200?q=coffee',
+        label: 'Ação',
+        image: 'https://img.usecurling.com/p/200/200?q=stock%20chart',
       },
       {
         id: 'd',
-        label: 'Milk',
-        image: 'https://img.usecurling.com/p/200/200?q=milk',
+        label: 'Fundo',
+        image: 'https://img.usecurling.com/p/200/200?q=money%20bag',
       },
     ],
     correct: 'a',
@@ -39,19 +39,19 @@ const lessonData = [
   {
     id: 2,
     type: 'translate',
-    question: 'Traduza esta frase',
-    content: 'The woman eats bread',
-    words: ['A', 'mulher', 'come', 'pão', 'menino', 'bebe', 'água'],
-    correct: ['A', 'mulher', 'come', 'pão'],
+    question: 'Monte a estratégia',
+    content: 'Comprar uma Call e vender uma Call de strike maior.',
+    words: ['Trava', 'de', 'Alta', 'Baixa', 'Borboleta', 'Condor'],
+    correct: ['Trava', 'de', 'Alta'],
   },
   {
     id: 3,
     type: 'select_text',
-    question: "Selecione a tradução correta para 'Água'",
+    question: "O que significa 'Strike'?",
     options: [
-      { id: 'a', label: 'Water', textOnly: true },
-      { id: 'b', label: 'Waiter', textOnly: true },
-      { id: 'c', label: 'Winter', textOnly: true },
+      { id: 'a', label: 'Preço de Exercício', textOnly: true },
+      { id: 'b', label: 'Data de Vencimento', textOnly: true },
+      { id: 'c', label: 'Prêmio da Opção', textOnly: true },
     ],
     correct: 'a',
   },
@@ -100,19 +100,15 @@ export default function Lesson() {
 
     if (isCorrect) {
       setStatus('correct')
-      const audio = new Audio(
-        'https://codeskulptor-demos.commondatastorage.googleapis.com/pang/pop.mp3',
-      ) // Placeholder sound
-      audio.play().catch(() => {})
       dispatch({ type: 'ADD_XP', payload: 10 })
     } else {
       setStatus('wrong')
       dispatch({ type: 'LOSE_HEART' })
       if (state.hearts <= 0) {
         toast.error('Você ficou sem vidas!', {
-          description: 'Pratique para ganhar vidas ou compre na loja.',
+          description: 'Pratique mais para recuperar ou compre na loja.',
         })
-        navigate('/')
+        navigate('/learn')
       }
     }
   }
@@ -124,13 +120,14 @@ export default function Lesson() {
       setSelectedWords([])
       setStatus('idle')
     } else {
-      // Lesson Complete
       dispatch({
         type: 'COMPLETE_LEVEL',
         payload: { unitId: 1, levelId: state.currentLevel },
       })
-      navigate('/')
-      toast.success('Lição Completada!', { description: 'Você ganhou +10 XP' })
+      navigate('/learn')
+      toast.success('Lição Completada!', {
+        description: 'Você ganhou +10 Pontos',
+      })
     }
   }
 
@@ -141,28 +138,28 @@ export default function Lesson() {
 
   return (
     <div className="flex flex-col h-screen max-w-2xl mx-auto bg-white overflow-hidden">
-      {/* Header */}
-      <header className="flex items-center gap-4 p-4">
+      <header className="flex items-center gap-4 p-6">
         <button
-          onClick={() => navigate('/')}
-          className="text-slate-400 hover:text-slate-600"
+          onClick={() => navigate('/learn')}
+          className="text-slate-400 hover:text-navy transition-colors"
         >
           <X className="w-6 h-6" />
         </button>
-        <Progress value={progress} className="h-4 rounded-xl" />
-        <div className="flex items-center gap-1 text-duo-red font-bold">
-          <Heart className="fill-duo-red w-5 h-5" />
+        <Progress
+          value={progress}
+          className="h-4 rounded-xl bg-slate-100 [&>div]:bg-emerald"
+        />
+        <div className="flex items-center gap-1 text-emerald font-bold">
+          <Shield className="fill-emerald/20 w-5 h-5" />
           {state.hearts}
         </div>
       </header>
 
-      {/* Content */}
-      <div className="flex-1 overflow-y-auto p-4 flex flex-col items-center justify-center gap-8">
-        <h1 className="text-2xl md:text-3xl font-bold text-duo-text text-center w-full">
+      <div className="flex-1 overflow-y-auto p-6 flex flex-col items-center justify-center gap-10">
+        <h1 className="text-2xl md:text-3xl font-bold text-navy text-center w-full">
           {currentLesson.question}
         </h1>
 
-        {/* Question Types */}
         {currentLesson.type === 'select' && (
           <div className="grid grid-cols-2 gap-4 w-full">
             {(currentLesson.options as any[]).map((opt) => (
@@ -170,23 +167,21 @@ export default function Lesson() {
                 key={opt.id}
                 onClick={() => handleSelectOption(opt.id)}
                 className={cn(
-                  'cursor-pointer border-2 rounded-2xl p-4 flex flex-col items-center gap-2 hover:bg-slate-50 transition-all active:scale-95',
+                  'cursor-pointer border-2 rounded-lg p-4 flex flex-col items-center gap-3 transition-all duration-300 active:scale-95',
                   selectedOption === opt.id
-                    ? 'border-duo-blue bg-blue-50'
-                    : 'border-duo-gray',
+                    ? 'border-navy bg-blue-50/50 shadow-sm'
+                    : 'border-slate-200 hover:bg-slate-50',
                 )}
               >
                 <img
                   src={opt.image}
                   alt={opt.label}
-                  className="w-24 h-24 object-contain"
+                  className="w-24 h-24 object-contain rounded-md"
                 />
                 <span
                   className={cn(
                     'font-bold',
-                    selectedOption === opt.id
-                      ? 'text-duo-blue'
-                      : 'text-slate-600',
+                    selectedOption === opt.id ? 'text-navy' : 'text-slate-600',
                   )}
                 >
                   {opt.label}
@@ -203,28 +198,26 @@ export default function Lesson() {
                 key={opt.id}
                 onClick={() => handleSelectOption(opt.id)}
                 className={cn(
-                  'cursor-pointer border-2 rounded-2xl p-4 flex items-center gap-4 hover:bg-slate-50 transition-all active:scale-95',
+                  'cursor-pointer border-2 rounded-lg p-5 flex items-center gap-4 transition-all duration-300 active:scale-95',
                   selectedOption === opt.id
-                    ? 'border-duo-blue bg-blue-50'
-                    : 'border-duo-gray',
+                    ? 'border-navy bg-blue-50/50 shadow-sm'
+                    : 'border-slate-200 hover:bg-slate-50',
                 )}
               >
                 <div
                   className={cn(
-                    'w-6 h-6 border-2 rounded-lg flex items-center justify-center text-xs font-bold',
+                    'w-6 h-6 border-2 rounded-md flex items-center justify-center text-xs font-bold',
                     selectedOption === opt.id
-                      ? 'border-duo-blue text-duo-blue'
-                      : 'border-slate-300 text-slate-300',
+                      ? 'border-navy text-navy'
+                      : 'border-slate-300 text-slate-400',
                   )}
                 >
                   {selectedOption === opt.id && '1'}
                 </div>
                 <span
                   className={cn(
-                    'font-bold',
-                    selectedOption === opt.id
-                      ? 'text-duo-blue'
-                      : 'text-slate-600',
+                    'font-bold text-lg',
+                    selectedOption === opt.id ? 'text-navy' : 'text-slate-600',
                   )}
                 >
                   {opt.label}
@@ -238,12 +231,12 @@ export default function Lesson() {
           <div className="w-full flex flex-col gap-8">
             <div className="flex items-center gap-4">
               <img
-                src="https://img.usecurling.com/i?q=person-speaking&shape=hand-drawn"
+                src="https://img.usecurling.com/i?q=businessman-cartoon&shape=hand-drawn"
                 className="w-24 h-24"
-                alt="Character"
+                alt="Instructor"
               />
-              <div className="bg-slate-100 border-2 border-slate-200 p-4 rounded-2xl rounded-tl-none relative">
-                <p className="text-lg text-slate-700">
+              <div className="bg-slate-100 border-2 border-slate-200 p-4 rounded-xl rounded-tl-none relative">
+                <p className="text-lg text-slate-700 font-medium">
                   {(currentLesson as any).content}
                 </p>
               </div>
@@ -254,7 +247,7 @@ export default function Lesson() {
                 <button
                   key={idx}
                   onClick={() => handleWordClick(word)}
-                  className="px-4 py-2 bg-white border-2 border-duo-gray border-b-4 rounded-xl text-slate-700 font-bold shadow-sm"
+                  className="px-4 py-2 bg-white border-2 border-silver border-b-4 rounded-lg text-navy font-bold shadow-sm"
                 >
                   {word}
                 </button>
@@ -270,10 +263,10 @@ export default function Lesson() {
                     onClick={() => handleWordClick(word)}
                     disabled={isSelected}
                     className={cn(
-                      'px-4 py-2 border-2 rounded-xl font-bold transition-all',
+                      'px-4 py-2 border-2 rounded-lg font-bold transition-all duration-300',
                       isSelected
                         ? 'bg-slate-200 border-slate-200 text-transparent'
-                        : 'bg-white border-duo-gray border-b-4 text-slate-700 hover:bg-slate-50 active:translate-y-1 active:border-b-0',
+                        : 'bg-white border-silver border-b-4 text-navy hover:bg-slate-50 active:translate-y-1 active:border-b-0',
                     )}
                   >
                     {word}
@@ -285,37 +278,36 @@ export default function Lesson() {
         )}
       </div>
 
-      {/* Footer */}
       <footer
         className={cn(
-          'p-4 border-t-2 transition-colors duration-300',
+          'p-6 border-t-2 transition-colors duration-300',
           status === 'correct'
             ? 'bg-[#d7ffb8] border-transparent'
             : status === 'wrong'
               ? 'bg-[#ffdfe0] border-transparent'
-              : 'bg-white border-duo-gray',
+              : 'bg-white border-slate-200',
         )}
       >
         <div className="flex justify-between items-center max-w-2xl mx-auto">
           {status === 'correct' && (
-            <div className="flex items-center gap-4 text-duo-green-shade animate-fade-in-up">
-              <div className="bg-white p-2 rounded-full">
+            <div className="flex items-center gap-4 text-emerald-shade animate-fade-in-up">
+              <div className="bg-white p-2 rounded-full shadow-sm">
                 <Check className="w-8 h-8" />
               </div>
               <div>
-                <p className="font-bold text-xl">Bom trabalho!</p>
+                <p className="font-bold text-xl">Excelente!</p>
               </div>
             </div>
           )}
 
           {status === 'wrong' && (
-            <div className="flex items-center gap-4 text-duo-red-shade animate-shake">
-              <div className="bg-white p-2 rounded-full">
+            <div className="flex items-center gap-4 text-red-600 animate-shake">
+              <div className="bg-white p-2 rounded-full shadow-sm">
                 <X className="w-8 h-8" />
               </div>
               <div>
                 <p className="font-bold text-xl">Resposta correta:</p>
-                <p className="text-md">
+                <p className="text-md font-medium">
                   {Array.isArray(currentLesson.correct)
                     ? (currentLesson.correct as string[]).join(' ')
                     : (currentLesson.options as any[]).find(
@@ -338,7 +330,7 @@ export default function Lesson() {
               </Button3D>
             ) : (
               <Button3D
-                variant={status === 'correct' ? 'default' : 'danger'}
+                variant={status === 'correct' ? 'super' : 'danger'}
                 size="lg"
                 className="w-full md:w-40"
                 onClick={handleContinue}

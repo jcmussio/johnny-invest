@@ -4,30 +4,26 @@ import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
 
 const button3dVariants = cva(
-  'inline-flex items-center justify-center whitespace-nowrap rounded-2xl text-sm font-bold uppercase tracking-widest ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:translate-y-[4px] active:border-b-0 border-b-4',
+  'inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-bold uppercase tracking-widest ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:translate-y-[4px] active:border-b-0 border-b-4',
   {
     variants: {
       variant: {
-        default:
-          'bg-duo-green text-white border-duo-green-shade hover:bg-duo-green/90',
-        primary:
-          'bg-duo-green text-white border-duo-green-shade hover:bg-duo-green/90',
-        secondary: 'bg-white text-duo-blue border-duo-gray hover:bg-slate-50',
+        default: 'bg-navy text-white border-navy-shade hover:bg-navy/90',
+        primary: 'bg-navy text-white border-navy-shade hover:bg-navy/90',
+        secondary: 'bg-silver text-navy border-silver-shade hover:bg-silver/90',
         outline:
-          'bg-transparent border-2 border-duo-gray text-duo-text border-b-4 hover:bg-slate-50',
-        danger:
-          'bg-duo-red text-white border-duo-red-shade hover:bg-duo-red/90',
-        super:
-          'bg-duo-purple text-white border-duo-purple-shade hover:bg-duo-purple/90',
+          'bg-transparent border-2 border-silver text-silver border-b-4 hover:bg-navy-shade',
+        danger: 'bg-red-500 text-white border-red-700 hover:bg-red-500/90',
+        super: 'bg-emerald text-white border-emerald-shade hover:bg-emerald/90',
         ghost:
-          'bg-transparent border-transparent text-duo-blue hover:bg-slate-100 active:border-none active:translate-y-0',
+          'bg-transparent border-transparent text-navy hover:bg-slate-100 active:border-none active:translate-y-0',
         locked:
-          'bg-duo-gray text-stone-400 border-stone-300 pointer-events-none',
+          'bg-slate-200 text-slate-400 border-slate-300 pointer-events-none',
       },
       size: {
         default: 'h-12 px-6 py-2',
-        sm: 'h-10 rounded-xl px-4 text-xs',
-        lg: 'h-14 rounded-2xl px-10 text-base',
+        sm: 'h-10 rounded-md px-4 text-xs',
+        lg: 'h-14 rounded-xl px-10 text-base',
         icon: 'h-12 w-12',
       },
       fullWidth: {
