@@ -9,18 +9,77 @@ import {
 } from '@/components/ui/popover'
 import useAppStore from '@/stores/useAppStore'
 
-const units = Array.from({ length: 8 }, (_, i) => ({
-  id: i + 1,
-  title: `Nível ${i + 1}`,
-  description: i === 0 ? 'Fundamentos de Opções' : `Módulo Avançado ${i}`,
+// Baseado na estrutura de banco de dados do JohnnyTrader
+const courseData = [
+  {
+    id: 1,
+    title: 'Nível 1',
+    description: 'Fundamentos do Mercado Financeiro',
+    xpRequired: 500,
+    lessonCount: 6,
+  },
+  {
+    id: 2,
+    title: 'Nível 2',
+    description: 'Conceitos de Risco e Retorno',
+    xpRequired: 600,
+    lessonCount: 6,
+  },
+  {
+    id: 3,
+    title: 'Nível 3',
+    description: 'Introdução a Opções',
+    xpRequired: 700,
+    lessonCount: 6,
+  },
+  {
+    id: 4,
+    title: 'Nível 4',
+    description: 'Gregas - Delta e Gamma',
+    xpRequired: 800,
+    lessonCount: 6,
+  },
+  {
+    id: 5,
+    title: 'Nível 5',
+    description: 'Gregas - Theta e Vega',
+    xpRequired: 800,
+    lessonCount: 7,
+  },
+  {
+    id: 6,
+    title: 'Nível 6',
+    description: 'Estratégias Básicas',
+    xpRequired: 900,
+    lessonCount: 7,
+  },
+  {
+    id: 7,
+    title: 'Nível 7',
+    description: 'Estratégias Avançadas',
+    xpRequired: 1000,
+    lessonCount: 6,
+  },
+  {
+    id: 8,
+    title: 'Nível 8',
+    description: 'Operações Reais e Psicologia',
+    xpRequired: 1000,
+    lessonCount: 6,
+  },
+]
+
+const units = courseData.map((unit, unitIndex) => ({
+  id: unit.id,
+  title: unit.title,
+  description: unit.description,
+  xpRequired: unit.xpRequired,
   color: 'bg-navy',
-  levels: [
-    { id: 1, x: 0 },
-    { id: 2, x: i % 2 === 0 ? -40 : 40 },
-    { id: 3, x: i % 2 === 0 ? -20 : 20 },
-    { id: 4, x: i % 2 === 0 ? 30 : -30 },
-    { id: 5, x: 0 },
-  ],
+  levels: Array.from({ length: unit.lessonCount }, (_, i) => ({
+    id: i + 1,
+    // Cria um caminho sinuoso
+    x: i % 2 === 0 ? (i % 4 === 0 ? 0 : -30) : 30,
+  })),
 }))
 
 export default function Learn() {
@@ -45,33 +104,38 @@ export default function Learn() {
           {/* Unit Header */}
           <div
             className={cn(
-              'w-full rounded-lg p-6 mb-8 flex justify-between items-center text-white shadow-sm border-2 border-navy-shade',
+              'w-full rounded-lg p-6 mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-white shadow-sm border-2 border-navy-shade',
               unit.color,
             )}
           >
             <div>
-              <h2 className="text-2xl font-extrabold tracking-tight">
+              <h2 className="text-2xl font-extrabold tracking-tight flex items-center gap-2">
                 {unit.title}
+                <span className="text-xs font-bold bg-white/20 px-2 py-1 rounded-md">
+                  {unit.xpRequired} XP
+                </span>
               </h2>
               <p className="text-silver font-medium mt-1">{unit.description}</p>
             </div>
             <Button3D
               variant="secondary"
               size="sm"
-              className="h-10 border-b-2 bg-silver text-navy border-silver-shade"
+              className="h-10 border-b-2 bg-silver text-navy border-silver-shade w-full sm:w-auto"
             >
-              GUIA
+              GUIA DO NÍVEL
             </Button3D>
           </div>
 
           {/* Path */}
           <div className="flex flex-col gap-6 relative w-full items-center">
-            {unit.levels.map((level, index) => {
+            {unit.levels.map((level) => {
               const levelIdFull = `${unit.id}-${level.id}`
               const isCompleted = state.completedLevels.includes(levelIdFull)
-              // Make level 1-1, 1-2, 1-3 unlocked for demo based on store state
+              // Logica simplificada para demonstracao: Nível 1 está liberado
               const isCurrent =
-                !isCompleted && state.unlockedLevels.includes(levelIdFull)
+                unit.id === 1 &&
+                !isCompleted &&
+                state.unlockedLevels.includes(levelIdFull)
               const isLocked = !isCompleted && !isCurrent
 
               return (
@@ -99,13 +163,6 @@ export default function Learn() {
                         ) : (
                           <Star className="w-8 h-8 text-white fill-current" />
                         )}
-
-                        {/* Certificate for completed levels */}
-                        {isCompleted && (
-                          <div className="absolute -top-1 -right-1 bg-white rounded-full p-1 border-2 border-silver-shade shadow-sm">
-                            <div className="w-3 h-3 bg-silver rounded-full" />
-                          </div>
-                        )}
                       </button>
                     </PopoverTrigger>
 
@@ -118,10 +175,10 @@ export default function Learn() {
                         <div className="bg-white rounded-lg p-5 border-2 border-silver shadow-xl text-center flex flex-col items-center gap-4 animate-fade-in-up">
                           <div>
                             <h3 className="font-bold text-lg text-navy">
-                              Nível {unit.id} • Lição {level.id}
+                              Aula {unit.id}.{level.id}
                             </h3>
                             <p className="text-slate-500 text-sm mt-1">
-                              Conceitos Essenciais
+                              Conceitos e Quiz (+50 XP)
                             </p>
                           </div>
                           <Button3D
@@ -129,10 +186,9 @@ export default function Learn() {
                             onClick={handleStartLesson}
                             variant="super"
                           >
-                            COMEÇAR +10 PTS
+                            COMEÇAR
                           </Button3D>
                         </div>
-                        {/* Little triangle arrow */}
                         <div className="w-4 h-4 bg-white border-b-2 border-r-2 border-silver transform rotate-45 absolute bottom-[-8px] left-1/2 -translate-x-1/2"></div>
                       </PopoverContent>
                     )}

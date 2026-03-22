@@ -45,6 +45,41 @@ export type Database = {
         }
         Relationships: []
       }
+      badges: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          level_id: string | null
+          name: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          level_id?: string | null
+          name: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          level_id?: string | null
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'badges_level_id_fkey'
+            columns: ['level_id']
+            isOneToOne: false
+            referencedRelation: 'levels'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       clientes: {
         Row: {
           cpf_cnpj: string | null
@@ -134,6 +169,30 @@ export type Database = {
             referencedColumns: ['id']
           },
         ]
+      }
+      courses: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
       }
       demonstrativos_liquidacao: {
         Row: {
@@ -254,6 +313,82 @@ export type Database = {
         }
         Relationships: []
       }
+      lessons: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          id: string
+          level_id: string | null
+          order: number
+          title: string
+          video_url: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          level_id?: string | null
+          order: number
+          title: string
+          video_url?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          level_id?: string | null
+          order?: number
+          title?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'lessons_level_id_fkey'
+            columns: ['level_id']
+            isOneToOne: false
+            referencedRelation: 'levels'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      levels: {
+        Row: {
+          course_id: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          level_number: number
+          title: string
+          xp_required: number | null
+        }
+        Insert: {
+          course_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          level_number: number
+          title: string
+          xp_required?: number | null
+        }
+        Update: {
+          course_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          level_number?: number
+          title?: string
+          xp_required?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'levels_course_id_fkey'
+            columns: ['course_id']
+            isOneToOne: false
+            referencedRelation: 'courses'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       oficina_custos: {
         Row: {
           created_at: string | null
@@ -295,6 +430,44 @@ export type Database = {
           },
         ]
       }
+      quizzes: {
+        Row: {
+          correct_answer: string
+          created_at: string | null
+          id: string
+          lesson_id: string | null
+          options: Json
+          question: string
+          xp_reward: number | null
+        }
+        Insert: {
+          correct_answer: string
+          created_at?: string | null
+          id?: string
+          lesson_id?: string | null
+          options: Json
+          question: string
+          xp_reward?: number | null
+        }
+        Update: {
+          correct_answer?: string
+          created_at?: string | null
+          id?: string
+          lesson_id?: string | null
+          options?: Json
+          question?: string
+          xp_reward?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'quizzes_lesson_id_fkey'
+            columns: ['lesson_id']
+            isOneToOne: false
+            referencedRelation: 'lessons'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       recibos_venda: {
         Row: {
           contrato_id: string | null
@@ -329,6 +502,114 @@ export type Database = {
             referencedColumns: ['id']
           },
         ]
+      }
+      user_badges: {
+        Row: {
+          badge_id: string | null
+          earned_at: string | null
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          badge_id?: string | null
+          earned_at?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          badge_id?: string | null
+          earned_at?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'user_badges_badge_id_fkey'
+            columns: ['badge_id']
+            isOneToOne: false
+            referencedRelation: 'badges'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'user_badges_user_id_fkey'
+            columns: ['user_id']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      user_progress: {
+        Row: {
+          completed: boolean | null
+          completed_at: string | null
+          id: string
+          lesson_id: string | null
+          quiz_score: number | null
+          user_id: string | null
+        }
+        Insert: {
+          completed?: boolean | null
+          completed_at?: string | null
+          id?: string
+          lesson_id?: string | null
+          quiz_score?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          completed?: boolean | null
+          completed_at?: string | null
+          id?: string
+          lesson_id?: string | null
+          quiz_score?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'user_progress_lesson_id_fkey'
+            columns: ['lesson_id']
+            isOneToOne: false
+            referencedRelation: 'lessons'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'user_progress_user_id_fkey'
+            columns: ['user_id']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      users: {
+        Row: {
+          created_at: string | null
+          current_level: number | null
+          email: string
+          id: string
+          name: string | null
+          streak: number | null
+          xp: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          current_level?: number | null
+          email: string
+          id: string
+          name?: string | null
+          streak?: number | null
+          xp?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          current_level?: number | null
+          email?: string
+          id?: string
+          name?: string | null
+          streak?: number | null
+          xp?: number | null
+        }
+        Relationships: []
       }
     }
     Views: {
@@ -487,6 +768,13 @@ export const Constants = {
 //   usuario_id: uuid (nullable)
 //   status: text (nullable)
 //   created_at: timestamp with time zone (nullable, default: now())
+// Table: badges
+//   id: uuid (not null, default: gen_random_uuid())
+//   name: text (not null)
+//   icon: text (nullable)
+//   level_id: uuid (nullable)
+//   description: text (nullable)
+//   created_at: timestamp with time zone (nullable, default: now())
 // Table: clientes
 //   id: uuid (not null, default: gen_random_uuid())
 //   nome: text (not null)
@@ -507,6 +795,12 @@ export const Constants = {
 //   comissao_venda: numeric (nullable)
 //   taxa_desistencia: numeric (nullable)
 //   status: text (nullable)
+//   created_at: timestamp with time zone (nullable, default: now())
+// Table: courses
+//   id: uuid (not null, default: gen_random_uuid())
+//   name: text (not null)
+//   description: text (nullable)
+//   icon: text (nullable)
 //   created_at: timestamp with time zone (nullable, default: now())
 // Table: demonstrativos_liquidacao
 //   id: uuid (not null, default: gen_random_uuid())
@@ -539,6 +833,22 @@ export const Constants = {
 //   data_vencimento: timestamp with time zone (nullable)
 //   status_pagamento: text (nullable)
 //   created_at: timestamp with time zone (nullable, default: now())
+// Table: lessons
+//   id: uuid (not null, default: gen_random_uuid())
+//   level_id: uuid (nullable)
+//   title: text (not null)
+//   content: text (nullable)
+//   video_url: text (nullable)
+//   order: integer (not null)
+//   created_at: timestamp with time zone (nullable, default: now())
+// Table: levels
+//   id: uuid (not null, default: gen_random_uuid())
+//   course_id: uuid (nullable)
+//   level_number: integer (not null)
+//   title: text (not null)
+//   xp_required: integer (nullable, default: 0)
+//   description: text (nullable)
+//   created_at: timestamp with time zone (nullable, default: now())
 // Table: oficina_custos
 //   id: uuid (not null, default: gen_random_uuid())
 //   moto_id: uuid (nullable)
@@ -548,6 +858,14 @@ export const Constants = {
 //   data_saida: timestamp with time zone (nullable)
 //   custo_total: numeric (nullable)
 //   created_at: timestamp with time zone (nullable, default: now())
+// Table: quizzes
+//   id: uuid (not null, default: gen_random_uuid())
+//   lesson_id: uuid (nullable)
+//   question: text (not null)
+//   options: jsonb (not null)
+//   correct_answer: text (not null)
+//   xp_reward: integer (nullable, default: 10)
+//   created_at: timestamp with time zone (nullable, default: now())
 // Table: recibos_venda
 //   id: uuid (not null, default: gen_random_uuid())
 //   contrato_id: uuid (nullable)
@@ -555,10 +873,33 @@ export const Constants = {
 //   data_emissao: timestamp with time zone (nullable, default: now())
 //   local: text (nullable, default: 'São Paulo - SP'::text)
 //   created_at: timestamp with time zone (nullable, default: now())
+// Table: user_badges
+//   id: uuid (not null, default: gen_random_uuid())
+//   user_id: uuid (nullable)
+//   badge_id: uuid (nullable)
+//   earned_at: timestamp with time zone (nullable, default: now())
+// Table: user_progress
+//   id: uuid (not null, default: gen_random_uuid())
+//   user_id: uuid (nullable)
+//   lesson_id: uuid (nullable)
+//   completed: boolean (nullable, default: false)
+//   quiz_score: integer (nullable, default: 0)
+//   completed_at: timestamp with time zone (nullable)
+// Table: users
+//   id: uuid (not null)
+//   email: text (not null)
+//   name: text (nullable)
+//   xp: integer (nullable, default: 0)
+//   streak: integer (nullable, default: 0)
+//   current_level: integer (nullable, default: 1)
+//   created_at: timestamp with time zone (nullable, default: now())
 
 // --- CONSTRAINTS ---
 // Table: agenda
 //   PRIMARY KEY agenda_pkey: PRIMARY KEY (id)
+// Table: badges
+//   FOREIGN KEY badges_level_id_fkey: FOREIGN KEY (level_id) REFERENCES levels(id) ON DELETE CASCADE
+//   PRIMARY KEY badges_pkey: PRIMARY KEY (id)
 // Table: clientes
 //   PRIMARY KEY clientes_pkey: PRIMARY KEY (id)
 //   CHECK clientes_tipo_check: CHECK ((tipo = ANY (ARRAY['vendedor'::text, 'comprador'::text, 'lead'::text])))
@@ -566,6 +907,8 @@ export const Constants = {
 //   FOREIGN KEY contratos_cliente_id_fkey: FOREIGN KEY (cliente_id) REFERENCES clientes(id) ON DELETE RESTRICT
 //   FOREIGN KEY contratos_moto_id_fkey: FOREIGN KEY (moto_id) REFERENCES estoque_motos(id) ON DELETE RESTRICT
 //   PRIMARY KEY contratos_pkey: PRIMARY KEY (id)
+// Table: courses
+//   PRIMARY KEY courses_pkey: PRIMARY KEY (id)
 // Table: demonstrativos_liquidacao
 //   FOREIGN KEY demonstrativos_liquidacao_contrato_id_fkey: FOREIGN KEY (contrato_id) REFERENCES contratos(id) ON DELETE RESTRICT
 //   PRIMARY KEY demonstrativos_liquidacao_pkey: PRIMARY KEY (id)
@@ -576,12 +919,35 @@ export const Constants = {
 //   CHECK financeiro_categoria_check: CHECK ((categoria = ANY (ARRAY['venda'::text, 'oficina'::text, 'despesa_fixa'::text])))
 //   PRIMARY KEY financeiro_pkey: PRIMARY KEY (id)
 //   CHECK financeiro_tipo_check: CHECK ((tipo = ANY (ARRAY['entrada'::text, 'saida'::text])))
+// Table: lessons
+//   FOREIGN KEY lessons_level_id_fkey: FOREIGN KEY (level_id) REFERENCES levels(id) ON DELETE CASCADE
+//   PRIMARY KEY lessons_pkey: PRIMARY KEY (id)
+// Table: levels
+//   FOREIGN KEY levels_course_id_fkey: FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
+//   UNIQUE levels_course_id_level_number_key: UNIQUE (course_id, level_number)
+//   PRIMARY KEY levels_pkey: PRIMARY KEY (id)
 // Table: oficina_custos
 //   FOREIGN KEY oficina_custos_moto_id_fkey: FOREIGN KEY (moto_id) REFERENCES estoque_motos(id) ON DELETE RESTRICT
 //   PRIMARY KEY oficina_custos_pkey: PRIMARY KEY (id)
+// Table: quizzes
+//   FOREIGN KEY quizzes_lesson_id_fkey: FOREIGN KEY (lesson_id) REFERENCES lessons(id) ON DELETE CASCADE
+//   PRIMARY KEY quizzes_pkey: PRIMARY KEY (id)
 // Table: recibos_venda
 //   FOREIGN KEY recibos_venda_contrato_id_fkey: FOREIGN KEY (contrato_id) REFERENCES contratos(id) ON DELETE RESTRICT
 //   PRIMARY KEY recibos_venda_pkey: PRIMARY KEY (id)
+// Table: user_badges
+//   FOREIGN KEY user_badges_badge_id_fkey: FOREIGN KEY (badge_id) REFERENCES badges(id) ON DELETE CASCADE
+//   PRIMARY KEY user_badges_pkey: PRIMARY KEY (id)
+//   UNIQUE user_badges_user_id_badge_id_key: UNIQUE (user_id, badge_id)
+//   FOREIGN KEY user_badges_user_id_fkey: FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+// Table: user_progress
+//   FOREIGN KEY user_progress_lesson_id_fkey: FOREIGN KEY (lesson_id) REFERENCES lessons(id) ON DELETE CASCADE
+//   PRIMARY KEY user_progress_pkey: PRIMARY KEY (id)
+//   FOREIGN KEY user_progress_user_id_fkey: FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+//   UNIQUE user_progress_user_id_lesson_id_key: UNIQUE (user_id, lesson_id)
+// Table: users
+//   FOREIGN KEY users_id_fkey: FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE
+//   PRIMARY KEY users_pkey: PRIMARY KEY (id)
 
 // --- ROW LEVEL SECURITY POLICIES ---
 // Table: agenda
@@ -591,6 +957,9 @@ export const Constants = {
 //     USING: true
 //     WITH CHECK: true
 //   Policy "leitura_publica" (SELECT, PERMISSIVE) roles={public}
+//     USING: true
+// Table: badges
+//   Policy "public_read_badges" (SELECT, PERMISSIVE) roles={authenticated}
 //     USING: true
 // Table: clientes
 //   Policy "Autenticados" (ALL, PERMISSIVE) roles={public}
@@ -604,6 +973,9 @@ export const Constants = {
 //   Policy "authenticated_all_contratos" (ALL, PERMISSIVE) roles={authenticated}
 //     USING: true
 //     WITH CHECK: true
+// Table: courses
+//   Policy "public_read_courses" (SELECT, PERMISSIVE) roles={authenticated}
+//     USING: true
 // Table: demonstrativos_liquidacao
 //   Policy "Privado" (ALL, PERMISSIVE) roles={public}
 //     USING: (auth.role() = 'authenticated'::text)
@@ -622,12 +994,21 @@ export const Constants = {
 //   Policy "authenticated_all_financeiro" (ALL, PERMISSIVE) roles={authenticated}
 //     USING: true
 //     WITH CHECK: true
+// Table: lessons
+//   Policy "public_read_lessons" (SELECT, PERMISSIVE) roles={authenticated}
+//     USING: true
+// Table: levels
+//   Policy "public_read_levels" (SELECT, PERMISSIVE) roles={authenticated}
+//     USING: true
 // Table: oficina_custos
 //   Policy "Autenticados" (ALL, PERMISSIVE) roles={public}
 //     USING: (auth.role() = 'authenticated'::text)
 //   Policy "authenticated_all_oficina_custos" (ALL, PERMISSIVE) roles={authenticated}
 //     USING: true
 //     WITH CHECK: true
+// Table: quizzes
+//   Policy "public_read_quizzes" (SELECT, PERMISSIVE) roles={authenticated}
+//     USING: true
 // Table: recibos_venda
 //   Policy "Autenticados escrita" (ALL, PERMISSIVE) roles={public}
 //     USING: (auth.role() = 'authenticated'::text)
@@ -636,6 +1017,23 @@ export const Constants = {
 //   Policy "authenticated_all_recibos_venda" (ALL, PERMISSIVE) roles={authenticated}
 //     USING: true
 //     WITH CHECK: true
+// Table: user_badges
+//   Policy "user_badges_insert_own" (INSERT, PERMISSIVE) roles={authenticated}
+//     WITH CHECK: (auth.uid() = user_id)
+//   Policy "user_badges_read_own" (SELECT, PERMISSIVE) roles={authenticated}
+//     USING: (auth.uid() = user_id)
+// Table: user_progress
+//   Policy "user_progress_insert_own" (INSERT, PERMISSIVE) roles={authenticated}
+//     WITH CHECK: (auth.uid() = user_id)
+//   Policy "user_progress_read_own" (SELECT, PERMISSIVE) roles={authenticated}
+//     USING: (auth.uid() = user_id)
+//   Policy "user_progress_update_own" (UPDATE, PERMISSIVE) roles={authenticated}
+//     USING: (auth.uid() = user_id)
+// Table: users
+//   Policy "users_read_own" (SELECT, PERMISSIVE) roles={authenticated}
+//     USING: (auth.uid() = id)
+//   Policy "users_update_own" (UPDATE, PERMISSIVE) roles={authenticated}
+//     USING: (auth.uid() = id)
 
 // --- DATABASE FUNCTIONS ---
 // FUNCTION rls_auto_enable()
@@ -669,3 +1067,11 @@ export const Constants = {
 //   END;
 //   $function$
 //
+
+// --- INDEXES ---
+// Table: levels
+//   CREATE UNIQUE INDEX levels_course_id_level_number_key ON public.levels USING btree (course_id, level_number)
+// Table: user_badges
+//   CREATE UNIQUE INDEX user_badges_user_id_badge_id_key ON public.user_badges USING btree (user_id, badge_id)
+// Table: user_progress
+//   CREATE UNIQUE INDEX user_progress_user_id_lesson_id_key ON public.user_progress USING btree (user_id, lesson_id)
