@@ -1,6 +1,6 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
-import Stripe from 'stripe'
-import { createClient } from '@supabase/supabase-js'
+import Stripe from 'npm:stripe'
+import { createClient } from 'npm:@supabase/supabase-js'
 
 Deno.serve(async (req: Request) => {
   // Apenas aceita requisições POST para o webhook
