@@ -1,4 +1,3 @@
-/* Tailwind config for the frontend react app. This is where the app theme should be defined: https://v2.tailwindcss.com/docs/configuration. */
 import type { Config } from 'tailwindcss'
 import animatePlugin from 'tailwindcss-animate'
 import typographyPlugin from '@tailwindcss/typography'
@@ -36,6 +35,34 @@ export default {
         ring: 'hsl(var(--ring))',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
+
+        // Duolingo-inspired Custom Colors
+        'duo-green': {
+          DEFAULT: '#58CC02',
+          shade: '#46A302', // Darker shade for 3D effect
+        },
+        'duo-blue': {
+          DEFAULT: '#1CB0F6',
+          shade: '#1899D6',
+        },
+        'duo-yellow': {
+          DEFAULT: '#FFC800',
+          shade: '#D9AA00',
+        },
+        'duo-red': {
+          DEFAULT: '#FF4B4B',
+          shade: '#D93030',
+        },
+        'duo-purple': {
+          DEFAULT: '#CE82FF',
+          shade: '#A65CD6',
+        },
+        'duo-gray': {
+          DEFAULT: '#E5E5E5',
+          shade: '#CECECE',
+        },
+        'duo-text': '#4B4B4B',
+
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
@@ -74,29 +101,37 @@ export default {
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))',
         },
-        chart: {
-          1: 'hsl(var(--chart-1))',
-          2: 'hsl(var(--chart-2))',
-          3: 'hsl(var(--chart-3))',
-          4: 'hsl(var(--chart-4))',
-          5: 'hsl(var(--chart-5))',
-        },
       },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+        '3xl': '1.5rem', // For rounded buttons
       },
-      transitionProperty: {
-        width: 'width',
-        height: 'height',
+      keyframes: {
+        'accordion-down': {
+          from: { height: '0' },
+          to: { height: 'var(--radix-accordion-content-height)' },
+        },
+        'accordion-up': {
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: '0' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
+        shake: {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '25%': { transform: 'translateX(-5px)' },
+          '75%': { transform: 'translateX(5px)' },
+        },
       },
-      boxShadow: {
-        subtle: '0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03)',
-        elevation: '0 4px 20px rgba(0, 0, 0, 0.05)',
-      },
-      transitionTimingFunction: {
-        apple: 'cubic-bezier(0.42, 0, 0.58, 1)',
+      animation: {
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
+        float: 'float 3s ease-in-out infinite',
+        shake: 'shake 0.4s ease-in-out',
       },
     },
   },
