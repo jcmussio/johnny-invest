@@ -483,6 +483,50 @@ export type Database = {
           },
         ]
       }
+      orders: {
+        Row: {
+          amount: number | null
+          created_at: string | null
+          currency: string | null
+          id: string
+          status: string | null
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string | null
+          currency?: string | null
+          id?: string
+          status?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string | null
+          currency?: string | null
+          id?: string
+          status?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'orders_user_id_fkey'
+            columns: ['user_id']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       quizzes: {
         Row: {
           correct_answer: string
@@ -652,6 +696,7 @@ export type Database = {
           current_level: number | null
           email: string
           id: string
+          is_premium: boolean | null
           name: string | null
           streak: number | null
           updated_at: string | null
@@ -662,6 +707,7 @@ export type Database = {
           current_level?: number | null
           email: string
           id: string
+          is_premium?: boolean | null
           name?: string | null
           streak?: number | null
           updated_at?: string | null
@@ -672,6 +718,7 @@ export type Database = {
           current_level?: number | null
           email?: string
           id?: string
+          is_premium?: boolean | null
           name?: string | null
           streak?: number | null
           updated_at?: string | null
@@ -977,6 +1024,16 @@ export const Constants = {
 //   data_saida: timestamp with time zone (nullable)
 //   custo_total: numeric (nullable)
 //   created_at: timestamp with time zone (nullable, default: now())
+// Table: orders
+//   id: uuid (not null, default: gen_random_uuid())
+//   user_id: uuid (nullable)
+//   stripe_session_id: text (nullable)
+//   stripe_payment_intent_id: text (nullable)
+//   amount: numeric (nullable, default: 29700)
+//   currency: text (nullable, default: 'BRL'::text)
+//   status: text (nullable, default: 'pending'::text)
+//   created_at: timestamp with time zone (nullable, default: now())
+//   updated_at: timestamp with time zone (nullable, default: now())
 // Table: quizzes
 //   id: uuid (not null, default: gen_random_uuid())
 //   lesson_id: uuid (nullable)
@@ -1017,6 +1074,7 @@ export const Constants = {
 //   current_level: integer (nullable, default: 1)
 //   created_at: timestamp with time zone (nullable, default: now())
 //   updated_at: timestamp with time zone (nullable, default: now())
+//   is_premium: boolean (nullable, default: false)
 // Table: weekly_challenges
 //   id: uuid (not null, default: gen_random_uuid())
 //   user_id: uuid (nullable)
@@ -1064,6 +1122,9 @@ export const Constants = {
 // Table: oficina_custos
 //   FOREIGN KEY oficina_custos_moto_id_fkey: FOREIGN KEY (moto_id) REFERENCES estoque_motos(id) ON DELETE RESTRICT
 //   PRIMARY KEY oficina_custos_pkey: PRIMARY KEY (id)
+// Table: orders
+//   PRIMARY KEY orders_pkey: PRIMARY KEY (id)
+//   FOREIGN KEY orders_user_id_fkey: FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 // Table: quizzes
 //   FOREIGN KEY quizzes_lesson_id_fkey: FOREIGN KEY (lesson_id) REFERENCES lessons(id) ON DELETE CASCADE
 //   PRIMARY KEY quizzes_pkey: PRIMARY KEY (id)
@@ -1149,6 +1210,11 @@ export const Constants = {
 //   Policy "authenticated_all_oficina_custos" (ALL, PERMISSIVE) roles={authenticated}
 //     USING: true
 //     WITH CHECK: true
+// Table: orders
+//   Policy "orders_insert_own" (INSERT, PERMISSIVE) roles={authenticated}
+//     WITH CHECK: (auth.uid() = user_id)
+//   Policy "orders_read_own" (SELECT, PERMISSIVE) roles={authenticated}
+//     USING: (auth.uid() = user_id)
 // Table: quizzes
 //   Policy "public_read_quizzes" (SELECT, PERMISSIVE) roles={authenticated}
 //     USING: true
