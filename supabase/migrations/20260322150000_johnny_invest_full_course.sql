@@ -58,7 +58,7 @@ CREATE POLICY "weekly_challenges_update_own" ON public.weekly_challenges FOR UPD
 DO $$
 DECLARE
   v_course_id uuid;
-  v_level_ids uuid[] := array_fill(null::uuid, ARRAY[8]);
+  v_current_level_id uuid;
   v_lesson_id uuid;
   i int;
   j int;
@@ -89,11 +89,11 @@ BEGIN
     VALUES (v_course_id, i, v_level_titles[i], v_level_xps[i], 'Dominar os conceitos de ' || v_level_titles[i])
     ON CONFLICT (course_id, level_number) DO UPDATE 
     SET title = EXCLUDED.title, xp_required = EXCLUDED.xp_required, objective = EXCLUDED.objective
-    RETURNING id INTO v_level_ids[i];
+    RETURNING id INTO v_current_level_id;
 
     -- Criar Badge (1 por nível)
     INSERT INTO public.badges (name, level_id, description, unlock_criteria)
-    VALUES ('Certificado de Domínio: Nível ' || i, v_level_ids[i], 'Concluiu o nível ' || v_level_titles[i], 'Completar todas as aulas do Nível ' || i)
+    VALUES ('Certificado de Domínio: Nível ' || i, v_current_level_id, 'Concluiu o nível ' || v_level_titles[i], 'Completar todas as aulas do Nível ' || i)
     ON CONFLICT DO NOTHING;
 
     -- 3. Iterar sobre as Aulas (6 ou 7 por nível)
@@ -102,7 +102,7 @@ BEGIN
       INSERT INTO public.lessons (id, level_id, lesson_number, title, content, key_concepts, "order")
       VALUES (
         v_lesson_id, 
-        v_level_ids[i], 
+        v_current_level_id, 
         j,
         'Aula ' || i || '.' || j || ': Exploração de ' || v_level_titles[i],
         'Conteúdo aprofundado e exemplos práticos da aula ' || j || ' sobre ' || v_level_titles[i],
