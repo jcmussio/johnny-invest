@@ -53,6 +53,7 @@ export type Database = {
           id: string
           level_id: string | null
           name: string
+          unlock_criteria: string | null
         }
         Insert: {
           created_at?: string | null
@@ -61,6 +62,7 @@ export type Database = {
           id?: string
           level_id?: string | null
           name: string
+          unlock_criteria?: string | null
         }
         Update: {
           created_at?: string | null
@@ -69,6 +71,7 @@ export type Database = {
           id?: string
           level_id?: string | null
           name?: string
+          unlock_criteria?: string | null
         }
         Relationships: [
           {
@@ -194,6 +197,44 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_missions: {
+        Row: {
+          completed: boolean | null
+          completed_at: string | null
+          created_at: string | null
+          id: string
+          mission_type: string
+          user_id: string | null
+          xp_reward: number | null
+        }
+        Insert: {
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          mission_type: string
+          user_id?: string | null
+          xp_reward?: number | null
+        }
+        Update: {
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          mission_type?: string
+          user_id?: string | null
+          xp_reward?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'daily_missions_user_id_fkey'
+            columns: ['user_id']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       demonstrativos_liquidacao: {
         Row: {
           comissao_venda: number | null
@@ -318,8 +359,11 @@ export type Database = {
           content: string | null
           created_at: string | null
           id: string
+          key_concepts: Json | null
+          lesson_number: number | null
           level_id: string | null
           order: number
+          suggested_infographic: string | null
           title: string
           video_url: string | null
         }
@@ -327,8 +371,11 @@ export type Database = {
           content?: string | null
           created_at?: string | null
           id?: string
+          key_concepts?: Json | null
+          lesson_number?: number | null
           level_id?: string | null
           order: number
+          suggested_infographic?: string | null
           title: string
           video_url?: string | null
         }
@@ -336,8 +383,11 @@ export type Database = {
           content?: string | null
           created_at?: string | null
           id?: string
+          key_concepts?: Json | null
+          lesson_number?: number | null
           level_id?: string | null
           order?: number
+          suggested_infographic?: string | null
           title?: string
           video_url?: string | null
         }
@@ -358,6 +408,7 @@ export type Database = {
           description: string | null
           id: string
           level_number: number
+          objective: string | null
           title: string
           xp_required: number | null
         }
@@ -367,6 +418,7 @@ export type Database = {
           description?: string | null
           id?: string
           level_number: number
+          objective?: string | null
           title: string
           xp_required?: number | null
         }
@@ -376,6 +428,7 @@ export type Database = {
           description?: string | null
           id?: string
           level_number?: number
+          objective?: string | null
           title?: string
           xp_required?: number | null
         }
@@ -436,7 +489,11 @@ export type Database = {
           created_at: string | null
           id: string
           lesson_id: string | null
-          options: Json
+          option_a: string | null
+          option_b: string | null
+          option_c: string | null
+          option_d: string | null
+          options: Json | null
           question: string
           xp_reward: number | null
         }
@@ -445,7 +502,11 @@ export type Database = {
           created_at?: string | null
           id?: string
           lesson_id?: string | null
-          options: Json
+          option_a?: string | null
+          option_b?: string | null
+          option_c?: string | null
+          option_d?: string | null
+          options?: Json | null
           question: string
           xp_reward?: number | null
         }
@@ -454,7 +515,11 @@ export type Database = {
           created_at?: string | null
           id?: string
           lesson_id?: string | null
-          options?: Json
+          option_a?: string | null
+          option_b?: string | null
+          option_c?: string | null
+          option_d?: string | null
+          options?: Json | null
           question?: string
           xp_reward?: number | null
         }
@@ -589,6 +654,7 @@ export type Database = {
           id: string
           name: string | null
           streak: number | null
+          updated_at: string | null
           xp: number | null
         }
         Insert: {
@@ -598,6 +664,7 @@ export type Database = {
           id: string
           name?: string | null
           streak?: number | null
+          updated_at?: string | null
           xp?: number | null
         }
         Update: {
@@ -607,9 +674,48 @@ export type Database = {
           id?: string
           name?: string | null
           streak?: number | null
+          updated_at?: string | null
           xp?: number | null
         }
         Relationships: []
+      }
+      weekly_challenges: {
+        Row: {
+          challenge_type: string
+          completed: boolean | null
+          completed_at: string | null
+          created_at: string | null
+          id: string
+          user_id: string | null
+          xp_reward: number | null
+        }
+        Insert: {
+          challenge_type: string
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          user_id?: string | null
+          xp_reward?: number | null
+        }
+        Update: {
+          challenge_type?: string
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          user_id?: string | null
+          xp_reward?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'weekly_challenges_user_id_fkey'
+            columns: ['user_id']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
+        ]
       }
     }
     Views: {
@@ -775,6 +881,7 @@ export const Constants = {
 //   level_id: uuid (nullable)
 //   description: text (nullable)
 //   created_at: timestamp with time zone (nullable, default: now())
+//   unlock_criteria: text (nullable)
 // Table: clientes
 //   id: uuid (not null, default: gen_random_uuid())
 //   nome: text (not null)
@@ -801,6 +908,14 @@ export const Constants = {
 //   name: text (not null)
 //   description: text (nullable)
 //   icon: text (nullable)
+//   created_at: timestamp with time zone (nullable, default: now())
+// Table: daily_missions
+//   id: uuid (not null, default: gen_random_uuid())
+//   user_id: uuid (nullable)
+//   mission_type: text (not null)
+//   xp_reward: integer (nullable, default: 50)
+//   completed: boolean (nullable, default: false)
+//   completed_at: timestamp with time zone (nullable)
 //   created_at: timestamp with time zone (nullable, default: now())
 // Table: demonstrativos_liquidacao
 //   id: uuid (not null, default: gen_random_uuid())
@@ -841,6 +956,9 @@ export const Constants = {
 //   video_url: text (nullable)
 //   order: integer (not null)
 //   created_at: timestamp with time zone (nullable, default: now())
+//   lesson_number: integer (nullable)
+//   key_concepts: jsonb (nullable)
+//   suggested_infographic: text (nullable)
 // Table: levels
 //   id: uuid (not null, default: gen_random_uuid())
 //   course_id: uuid (nullable)
@@ -849,6 +967,7 @@ export const Constants = {
 //   xp_required: integer (nullable, default: 0)
 //   description: text (nullable)
 //   created_at: timestamp with time zone (nullable, default: now())
+//   objective: text (nullable)
 // Table: oficina_custos
 //   id: uuid (not null, default: gen_random_uuid())
 //   moto_id: uuid (nullable)
@@ -862,10 +981,14 @@ export const Constants = {
 //   id: uuid (not null, default: gen_random_uuid())
 //   lesson_id: uuid (nullable)
 //   question: text (not null)
-//   options: jsonb (not null)
+//   options: jsonb (nullable)
 //   correct_answer: text (not null)
 //   xp_reward: integer (nullable, default: 10)
 //   created_at: timestamp with time zone (nullable, default: now())
+//   option_a: text (nullable)
+//   option_b: text (nullable)
+//   option_c: text (nullable)
+//   option_d: text (nullable)
 // Table: recibos_venda
 //   id: uuid (not null, default: gen_random_uuid())
 //   contrato_id: uuid (nullable)
@@ -893,6 +1016,15 @@ export const Constants = {
 //   streak: integer (nullable, default: 0)
 //   current_level: integer (nullable, default: 1)
 //   created_at: timestamp with time zone (nullable, default: now())
+//   updated_at: timestamp with time zone (nullable, default: now())
+// Table: weekly_challenges
+//   id: uuid (not null, default: gen_random_uuid())
+//   user_id: uuid (nullable)
+//   challenge_type: text (not null)
+//   xp_reward: integer (nullable, default: 200)
+//   completed: boolean (nullable, default: false)
+//   completed_at: timestamp with time zone (nullable)
+//   created_at: timestamp with time zone (nullable, default: now())
 
 // --- CONSTRAINTS ---
 // Table: agenda
@@ -909,6 +1041,9 @@ export const Constants = {
 //   PRIMARY KEY contratos_pkey: PRIMARY KEY (id)
 // Table: courses
 //   PRIMARY KEY courses_pkey: PRIMARY KEY (id)
+// Table: daily_missions
+//   PRIMARY KEY daily_missions_pkey: PRIMARY KEY (id)
+//   FOREIGN KEY daily_missions_user_id_fkey: FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 // Table: demonstrativos_liquidacao
 //   FOREIGN KEY demonstrativos_liquidacao_contrato_id_fkey: FOREIGN KEY (contrato_id) REFERENCES contratos(id) ON DELETE RESTRICT
 //   PRIMARY KEY demonstrativos_liquidacao_pkey: PRIMARY KEY (id)
@@ -948,6 +1083,9 @@ export const Constants = {
 // Table: users
 //   FOREIGN KEY users_id_fkey: FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE
 //   PRIMARY KEY users_pkey: PRIMARY KEY (id)
+// Table: weekly_challenges
+//   PRIMARY KEY weekly_challenges_pkey: PRIMARY KEY (id)
+//   FOREIGN KEY weekly_challenges_user_id_fkey: FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 
 // --- ROW LEVEL SECURITY POLICIES ---
 // Table: agenda
@@ -976,6 +1114,11 @@ export const Constants = {
 // Table: courses
 //   Policy "public_read_courses" (SELECT, PERMISSIVE) roles={authenticated}
 //     USING: true
+// Table: daily_missions
+//   Policy "daily_missions_read_own" (SELECT, PERMISSIVE) roles={authenticated}
+//     USING: ((auth.uid() = user_id) OR (user_id IS NULL))
+//   Policy "daily_missions_update_own" (UPDATE, PERMISSIVE) roles={authenticated}
+//     USING: (auth.uid() = user_id)
 // Table: demonstrativos_liquidacao
 //   Policy "Privado" (ALL, PERMISSIVE) roles={public}
 //     USING: (auth.role() = 'authenticated'::text)
@@ -1034,6 +1177,11 @@ export const Constants = {
 //     USING: (auth.uid() = id)
 //   Policy "users_update_own" (UPDATE, PERMISSIVE) roles={authenticated}
 //     USING: (auth.uid() = id)
+// Table: weekly_challenges
+//   Policy "weekly_challenges_read_own" (SELECT, PERMISSIVE) roles={authenticated}
+//     USING: ((auth.uid() = user_id) OR (user_id IS NULL))
+//   Policy "weekly_challenges_update_own" (UPDATE, PERMISSIVE) roles={authenticated}
+//     USING: (auth.uid() = user_id)
 
 // --- DATABASE FUNCTIONS ---
 // FUNCTION rls_auto_enable()

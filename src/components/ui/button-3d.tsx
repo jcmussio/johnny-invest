@@ -12,9 +12,10 @@ const button3dVariants = cva(
         primary: 'bg-navy text-white border-navy-shade hover:bg-navy/90',
         secondary: 'bg-silver text-navy border-silver-shade hover:bg-silver/90',
         outline:
-          'bg-transparent border-2 border-silver text-silver border-b-4 hover:bg-navy-shade',
+          'bg-transparent border-2 border-silver text-silver border-b-4 hover:bg-[#22355c]',
         danger: 'bg-red-500 text-white border-red-700 hover:bg-red-500/90',
         super: 'bg-emerald text-white border-emerald-shade hover:bg-emerald/90',
+        success: 'bg-[#10b981] text-white border-[#047857] hover:bg-[#0e9f6e]',
         ghost:
           'bg-transparent border-transparent text-navy hover:bg-slate-100 active:border-none active:translate-y-0',
         locked:
