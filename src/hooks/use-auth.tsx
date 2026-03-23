@@ -65,7 +65,47 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           if (!insertError && mounted) {
             setProfile(newData)
           }
-        } else if (mounted) {
+        } else if (mounted && data) {
+          // Streak Logic
+          const todayDate = new Date()
+          const todayStr = new Date(
+            todayDate.getTime() - todayDate.getTimezoneOffset() * 60000,
+          )
+            .toISOString()
+            .split('T')[0]
+
+          if (data.last_login_date !== todayStr) {
+            let newStreak = data.streak || 0
+            if (data.last_login_date) {
+              const lastLogin = new Date(data.last_login_date)
+              lastLogin.setUTCHours(0, 0, 0, 0)
+              const today = new Date(todayStr)
+              today.setUTCHours(0, 0, 0, 0)
+
+              const diffTime = today.getTime() - lastLogin.getTime()
+              const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24))
+
+              if (diffDays === 1) {
+                newStreak += 1
+              } else if (diffDays > 1) {
+                newStreak = 1
+              }
+            } else {
+              newStreak = 1
+            }
+
+            await supabase
+              .from('users')
+              .update({
+                last_login_date: todayStr,
+                streak: newStreak,
+              })
+              .eq('id', sessionUser.id)
+
+            data.last_login_date = todayStr
+            data.streak = newStreak
+          }
+
           setProfile(data)
         }
       } catch (err) {
@@ -79,13 +119,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
       if (mounted) {
-        // Garantindo sincronia e removendo travamentos
         setSession(session)
         setUser(session?.user ?? null)
-        setLoading(false) // Unblock imediatamente
+        setLoading(false)
 
         if (session?.user) {
-          // Chamada assíncrona isolada para não travar o fluxo de autenticação (sem uso de await no callback)
           setTimeout(() => {
             fetchProfile(session.user)
           }, 0)
@@ -99,7 +137,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (mounted) {
         setSession(session)
         setUser(session?.user ?? null)
-        setLoading(false) // Unblock imediatamente
+        setLoading(false)
 
         if (session?.user) {
           setTimeout(() => {

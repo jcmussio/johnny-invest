@@ -6,8 +6,10 @@ import Index from './pages/Index'
 import Learn from './pages/Learn'
 import Dashboard from './pages/Dashboard'
 import DashboardPremium from './pages/DashboardPremium'
+import AulaPremium from './pages/AulaPremium'
+import QuizPremium from './pages/QuizPremium'
+import MissaoPremium from './pages/MissaoPremium'
 import Lesson from './pages/Lesson'
-import Quiz from './pages/Quiz'
 import Leaderboard from './pages/Leaderboard'
 import Shop from './pages/Shop'
 import Profile from './pages/Profile'
@@ -35,7 +37,6 @@ const App = () => (
           <Toaster />
           <Sonner />
           <Routes>
-            {/* Rotas Públicas */}
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
@@ -43,7 +44,6 @@ const App = () => (
             <Route path="/resumo-compra" element={<ResumoCompra />} />
             <Route path="/pricing" element={<Pricing />} />
 
-            {/* Rotas Protegidas */}
             <Route element={<ProtectedRoute />}>
               <Route path="/sucesso-pagamento" element={<SucessoPagamento />} />
               <Route element={<Layout />}>
@@ -59,12 +59,16 @@ const App = () => (
                 <Route path="/shop" element={<Shop />} />
                 <Route path="/profile" element={<Profile />} />
               </Route>
+
               <Route
                 path="/lesson"
                 element={<Navigate to="/dashboard" replace />}
               />
               <Route path="/lesson/:id" element={<Lesson />} />
-              <Route path="/quiz/:lessonId" element={<Quiz />} />
+
+              <Route path="/aula/:id" element={<AulaPremium />} />
+              <Route path="/quiz/:id" element={<QuizPremium />} />
+              <Route path="/missao/:id" element={<MissaoPremium />} />
             </Route>
 
             <Route path="*" element={<Navigate to="/" replace />} />
