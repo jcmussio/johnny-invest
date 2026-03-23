@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { Button3D } from '@/components/ui/button-3d'
 import { createStripeCheckout } from '@/services/stripe'
 import { toast } from 'sonner'
+import { supabase } from '@/lib/supabase/client'
+import { useAuth } from '@/hooks/use-auth'
 import {
   CheckCircle2,
   ShoppingCart,
@@ -14,12 +16,30 @@ import {
 export default function ResumoCompra() {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
+  const { user } = useAuth()
 
   const handleCheckout = async () => {
+    // Buscar sessão atualizada
+    const { data: sessionData } = await supabase.auth.getSession()
+    const currentUser = sessionData.session?.user || user
+
+    if (!currentUser) {
+      toast.error('Autenticação necessária', {
+        description: 'Sua sessão expirou. Faça login novamente.',
+      })
+      navigate('/login')
+      return
+    }
+
     setLoading(true)
     try {
-      // In a real app, this price ID would come from your environment variables or database
       const priceId = import.meta.env.VITE_STRIPE_PRICE_ID || 'price_dummy'
+
+      console.log('ResumoCompra: Iniciando checkout com:', {
+        user_id: currentUser.id,
+        email: currentUser.email,
+        price_id: priceId,
+      })
 
       const { data, error } = await createStripeCheckout(
         priceId,
@@ -27,9 +47,13 @@ export default function ResumoCompra() {
         `${window.location.origin}/resumo-compra`,
       )
 
-      if (error) throw error
+      if (error) {
+        console.error('ResumoCompra: Erro da Edge Function:', error)
+        throw error
+      }
 
       if (data?.url) {
+        console.log('ResumoCompra: Redirecionando para:', data.url)
         window.location.href = data.url
       } else {
         throw new Error('URL de checkout não retornada')
@@ -37,7 +61,7 @@ export default function ResumoCompra() {
     } catch (error: any) {
       console.error('Erro no checkout:', error)
       toast.error('Erro ao iniciar pagamento', {
-        description: 'Tente novamente mais tarde.',
+        description: error.message || 'Tente novamente mais tarde.',
       })
     } finally {
       setLoading(false)

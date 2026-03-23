@@ -5,6 +5,7 @@ import { createStripeCheckout } from '@/services/stripe'
 import { toast } from 'sonner'
 import { CheckCircle2, ShoppingCart, CreditCard, Loader2 } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
+import { supabase } from '@/lib/supabase/client'
 
 export default function Pricing() {
   const navigate = useNavigate()
@@ -12,7 +13,14 @@ export default function Pricing() {
   const { user } = useAuth()
 
   const handleCheckout = async () => {
-    if (!user) {
+    // 1. & 2. Garantir que o usuário está autenticado e capturar a sessão mais atualizada
+    const { data: sessionData } = await supabase.auth.getSession()
+    const currentUser = sessionData.session?.user || user
+
+    if (!currentUser) {
+      console.warn(
+        'Usuário não encontrado na sessão atual. Redirecionando para login.',
+      )
       toast.error('Autenticação necessária', {
         description: 'Você precisa estar logado para iniciar o pagamento.',
       })
@@ -24,6 +32,14 @@ export default function Pricing() {
     try {
       const priceId = import.meta.env.VITE_STRIPE_PRICE_ID || 'price_dummy'
 
+      // Log dos parâmetros enviados para debug
+      console.log('1/2. Iniciando checkout com os parâmetros:', {
+        user_id: currentUser.id,
+        email: currentUser.email,
+        price_id: priceId,
+      })
+
+      // Chamada à Edge Function stripe-checkout
       const { data, error } = await createStripeCheckout(
         priceId,
         `${window.location.origin}/sucesso-pagamento`,
@@ -31,18 +47,24 @@ export default function Pricing() {
       )
 
       if (error) {
+        console.error('Erro capturado no createStripeCheckout:', error)
         throw error
       }
 
+      console.log('Resposta de sucesso do checkout Stripe:', data)
+
+      // 3. Redirecionamento automático
       if (data?.url) {
+        console.log('3. Redirecionando usuário para Stripe URL:', data.url)
         window.location.href = data.url
       } else {
+        console.error('URL não encontrada na resposta da Edge Function:', data)
         throw new Error('URL de checkout não retornada pela função.')
       }
     } catch (error: any) {
-      console.error('Erro detalhado no checkout:', error)
+      // 4. Exibir erro no console para debug
+      console.error('4. Erro detalhado no fluxo de checkout:', error)
       toast.error('Erro ao iniciar pagamento', {
-        // Agora exibiremos o erro exato retornado pelo Stripe ou pela Edge Function
         description: error.message || 'Tente novamente mais tarde.',
       })
     } finally {

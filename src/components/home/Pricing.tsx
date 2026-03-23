@@ -5,6 +5,7 @@ import { Check } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
 import { createStripeCheckout } from '@/services/stripe'
 import { toast } from 'sonner'
+import { supabase } from '@/lib/supabase/client'
 
 export function Pricing() {
   const { user, profile } = useAuth()
@@ -12,7 +13,11 @@ export function Pricing() {
   const [isLoading, setIsLoading] = useState(false)
 
   const handleCheckout = async () => {
-    if (!user) {
+    // Buscar sessão diretamente do Supabase
+    const { data: sessionData } = await supabase.auth.getSession()
+    const currentUser = sessionData.session?.user || user
+
+    if (!currentUser) {
       toast.info('Por favor, crie sua conta primeiro para garantir a vaga.')
       navigate('/signup')
       return
@@ -29,6 +34,12 @@ export function Pricing() {
       const successUrl = `${window.location.origin}/learn?success=true`
       const cancelUrl = `${window.location.origin}/?canceled=true`
 
+      console.log('Home/Pricing: Iniciando checkout com:', {
+        user_id: currentUser.id,
+        email: currentUser.email,
+        price_id: priceId,
+      })
+
       const { data, error } = await createStripeCheckout(
         priceId,
         successUrl,
@@ -40,6 +51,7 @@ export function Pricing() {
       }
 
       if (data?.url) {
+        console.log('Home/Pricing: Redirecionando para:', data.url)
         window.location.href = data.url
       } else {
         throw new Error('URL de checkout não retornada')
