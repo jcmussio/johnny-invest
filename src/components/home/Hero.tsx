@@ -13,7 +13,7 @@ export function Hero() {
     } else if (user && !profile?.is_premium) {
       document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })
     } else {
-      navigate('/login')
+      navigate('/signup')
     }
   }
 

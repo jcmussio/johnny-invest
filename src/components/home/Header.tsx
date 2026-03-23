@@ -17,7 +17,7 @@ export function Header() {
     } else if (user && !profile?.is_premium) {
       scrollTo('pricing')
     } else {
-      navigate('/login')
+      navigate('/signup')
     }
   }
 

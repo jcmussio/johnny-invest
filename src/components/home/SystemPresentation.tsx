@@ -92,7 +92,7 @@ export function SystemPresentation() {
                     document
                       .getElementById('pricing')
                       ?.scrollIntoView({ behavior: 'smooth' })
-                  else navigate('/login')
+                  else navigate('/signup')
                 }}
                 variant="outline"
                 size="lg"

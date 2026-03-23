@@ -14,7 +14,7 @@ export function Pricing() {
   const handleCheckout = async () => {
     if (!user) {
       toast.info('Por favor, crie sua conta primeiro para garantir a vaga.')
-      navigate('/login')
+      navigate('/signup')
       return
     }
 
