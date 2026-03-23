@@ -13,6 +13,7 @@ import Profile from './pages/Profile'
 import NotFound from './pages/NotFound'
 import Login from './pages/Login'
 import Success from './pages/Success'
+import CadastroCompleto from './pages/CadastroCompleto'
 import Layout from './components/Layout'
 import Missions from './pages/Missions'
 import Badges from './pages/Badges'
@@ -34,6 +35,7 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Login />} />
             <Route path="/success" element={<Success />} />
+            <Route path="/cadastro-completo" element={<CadastroCompleto />} />
 
             <Route element={<ProtectedRoute />}>
               <Route element={<Layout />}>

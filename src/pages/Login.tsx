@@ -11,6 +11,7 @@ export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loadingLocal, setLoadingLocal] = useState(false)
+  const [justSignedUp, setJustSignedUp] = useState(false)
   const { signIn, signUp, user, loading } = useAuth()
   const navigate = useNavigate()
 
@@ -19,10 +20,10 @@ export default function Login() {
   }, [location.pathname])
 
   useEffect(() => {
-    if (!loading && user) {
+    if (!loading && user && !justSignedUp) {
       navigate('/dashboard')
     }
-  }, [user, loading, navigate])
+  }, [user, loading, navigate, justSignedUp])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -35,15 +36,18 @@ export default function Login() {
       } else {
         const { error } = await signUp(email, password)
         if (error) throw error
+        setJustSignedUp(true)
         toast.success('Conta criada com sucesso!')
+        setTimeout(() => {
+          navigate('/cadastro-completo')
+        }, 2000)
       }
     } catch (error: any) {
+      setLoadingLocal(false)
       toast.error('Erro de autenticação', {
         description:
           error.message || 'Verifique suas credenciais e tente novamente.',
       })
-    } finally {
-      setLoadingLocal(false)
     }
   }
 
