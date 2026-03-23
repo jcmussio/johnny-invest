@@ -9,8 +9,7 @@ Deno.serve(async (req: Request) => {
   }
 
   const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY')
-  const stripeWebhookSecret =
-    Deno.env.get('STRIPE_WEBHOOK_SECRET') ?? stripeSecretKey
+  const stripeWebhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET') ?? stripeSecretKey
 
   if (!stripeSecretKey || !stripeWebhookSecret) {
     return new Response('Stripe keys are not set', { status: 400 })
@@ -29,18 +28,13 @@ Deno.serve(async (req: Request) => {
 
   try {
     const body = await req.text()
-
+    
     // Valida a assinatura do webhook
-    const event = stripe.webhooks.constructEvent(
-      body,
-      signature,
-      stripeWebhookSecret,
-    )
+    const event = stripe.webhooks.constructEvent(body, signature, stripeWebhookSecret)
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    const supabaseServiceRoleKey =
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-
+    const supabaseServiceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    
     // Usa a Service Role Key para ignorar o RLS e atualizar as tabelas do sistema
     const supabase = createClient(supabaseUrl, supabaseServiceRoleKey)
 
@@ -49,22 +43,20 @@ Deno.serve(async (req: Request) => {
       const paymentIntentId = paymentIntent.id
 
       // Busca a sessão de checkout relacionada a este payment intent para recuperar o user_id (client_reference_id)
-      const sessions = await stripe.checkout.sessions.list({
-        payment_intent: paymentIntentId,
-      })
-
+      const sessions = await stripe.checkout.sessions.list({ payment_intent: paymentIntentId })
+      
       if (sessions.data.length > 0) {
         const session = sessions.data[0]
         const userId = session.client_reference_id
         const sessionId = session.id
-
+        
         if (userId) {
           // Atualiza o status do pedido para 'completed'
           await supabase
             .from('orders')
-            .update({
+            .update({ 
               status: 'completed',
-              stripe_payment_intent_id: paymentIntentId,
+              stripe_payment_intent_id: paymentIntentId
             })
             .eq('stripe_session_id', sessionId)
 
@@ -108,10 +100,8 @@ Deno.serve(async (req: Request) => {
   } catch (error) {
     console.error('Webhook error:', error)
     return new Response(
-      JSON.stringify({
-        error: error instanceof Error ? error.message : 'Unknown error',
-      }),
-      { status: 400, headers: { 'Content-Type': 'application/json' } },
+      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
+      { status: 400, headers: { 'Content-Type': 'application/json' } }
     )
   }
 })
