@@ -19,8 +19,13 @@ export default function Signup() {
       const { error } = await signUp(email, password)
       if (error) throw error
 
-      toast.success('Conta criada com sucesso!')
-      navigate('/cadastro-completo')
+      toast.success('Conta criada com sucesso!', {
+        description: 'Redirecionando para o próximo passo...',
+      })
+
+      setTimeout(() => {
+        navigate('/cadastro-completo')
+      }, 1000)
     } catch (error: any) {
       setLoadingLocal(false)
       toast.error('Erro de autenticação', {
@@ -56,6 +61,7 @@ export default function Signup() {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full bg-[#1a2a4a] border border-[#c0c0c0]/30 rounded-lg px-4 h-12 text-white focus:outline-none focus:border-[#10b981] transition-colors"
               required
+              disabled={loadingLocal}
             />
           </div>
           <div>
@@ -69,6 +75,7 @@ export default function Signup() {
               className="w-full bg-[#1a2a4a] border border-[#c0c0c0]/30 rounded-lg px-4 h-12 text-white focus:outline-none focus:border-[#10b981] transition-colors"
               required
               minLength={6}
+              disabled={loadingLocal}
             />
           </div>
 
@@ -86,6 +93,7 @@ export default function Signup() {
             type="button"
             onClick={() => navigate('/login')}
             className="text-[#10b981] text-sm font-semibold hover:underline"
+            disabled={loadingLocal}
           >
             Já tem uma conta? Entre aqui
           </button>
@@ -96,6 +104,7 @@ export default function Signup() {
             type="button"
             onClick={() => navigate('/')}
             className="text-[#c0c0c0] text-xs hover:text-white"
+            disabled={loadingLocal}
           >
             Voltar para a página inicial
           </button>
