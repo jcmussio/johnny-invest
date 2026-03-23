@@ -11,7 +11,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: '14.4'
+    PostgrestVersion: "14.4"
   }
   public: {
     Tables: {
@@ -50,11 +50,13 @@ export type Database = {
           badge_nome: string | null
           conteudo_markdown: string | null
           created_at: string | null
+          descricao: string | null
           id: string
           missao_nome: string | null
           nivel: number | null
           numero_aula: number | null
           objetivo: string | null
+          ordem: number | null
           quiz_nome: string | null
           titulo: string | null
           topicos: string | null
@@ -63,11 +65,13 @@ export type Database = {
           badge_nome?: string | null
           conteudo_markdown?: string | null
           created_at?: string | null
+          descricao?: string | null
           id?: string
           missao_nome?: string | null
           nivel?: number | null
           numero_aula?: number | null
           objetivo?: string | null
+          ordem?: number | null
           quiz_nome?: string | null
           titulo?: string | null
           topicos?: string | null
@@ -76,11 +80,13 @@ export type Database = {
           badge_nome?: string | null
           conteudo_markdown?: string | null
           created_at?: string | null
+          descricao?: string | null
           id?: string
           missao_nome?: string | null
           nivel?: number | null
           numero_aula?: number | null
           objetivo?: string | null
+          ordem?: number | null
           quiz_nome?: string | null
           titulo?: string | null
           topicos?: string | null
@@ -89,8 +95,10 @@ export type Database = {
       }
       badges: {
         Row: {
+          badge_id: string | null
           beneficio: string | null
           created_at: string | null
+          data_conquista: string | null
           description: string | null
           icon: string | null
           id: string
@@ -99,10 +107,13 @@ export type Database = {
           nome: string | null
           requisito: string | null
           unlock_criteria: string | null
+          user_id: string | null
         }
         Insert: {
+          badge_id?: string | null
           beneficio?: string | null
           created_at?: string | null
+          data_conquista?: string | null
           description?: string | null
           icon?: string | null
           id?: string
@@ -111,10 +122,13 @@ export type Database = {
           nome?: string | null
           requisito?: string | null
           unlock_criteria?: string | null
+          user_id?: string | null
         }
         Update: {
+          badge_id?: string | null
           beneficio?: string | null
           created_at?: string | null
+          data_conquista?: string | null
           description?: string | null
           icon?: string | null
           id?: string
@@ -123,14 +137,15 @@ export type Database = {
           nome?: string | null
           requisito?: string | null
           unlock_criteria?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: 'badges_level_id_fkey'
-            columns: ['level_id']
+            foreignKeyName: "badges_level_id_fkey"
+            columns: ["level_id"]
             isOneToOne: false
-            referencedRelation: 'levels'
-            referencedColumns: ['id']
+            referencedRelation: "levels"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -209,18 +224,18 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'contratos_cliente_id_fkey'
-            columns: ['cliente_id']
+            foreignKeyName: "contratos_cliente_id_fkey"
+            columns: ["cliente_id"]
             isOneToOne: false
-            referencedRelation: 'clientes'
-            referencedColumns: ['id']
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
           },
           {
-            foreignKeyName: 'contratos_moto_id_fkey'
-            columns: ['moto_id']
+            foreignKeyName: "contratos_moto_id_fkey"
+            columns: ["moto_id"]
             isOneToOne: false
-            referencedRelation: 'estoque_motos'
-            referencedColumns: ['id']
+            referencedRelation: "estoque_motos"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -278,11 +293,11 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'daily_missions_user_id_fkey'
-            columns: ['user_id']
+            foreignKeyName: "daily_missions_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: 'users'
-            referencedColumns: ['id']
+            referencedRelation: "users"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -319,11 +334,11 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'demonstrativos_liquidacao_contrato_id_fkey'
-            columns: ['contrato_id']
+            foreignKeyName: "demonstrativos_liquidacao_contrato_id_fkey"
+            columns: ["contrato_id"]
             isOneToOne: false
-            referencedRelation: 'contratos'
-            referencedColumns: ['id']
+            referencedRelation: "contratos"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -447,11 +462,11 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'lessons_level_id_fkey'
-            columns: ['level_id']
+            foreignKeyName: "lessons_level_id_fkey"
+            columns: ["level_id"]
             isOneToOne: false
-            referencedRelation: 'levels'
-            referencedColumns: ['id']
+            referencedRelation: "levels"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -491,11 +506,11 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'levels_course_id_fkey'
-            columns: ['course_id']
+            foreignKeyName: "levels_course_id_fkey"
+            columns: ["course_id"]
             isOneToOne: false
-            referencedRelation: 'courses'
-            referencedColumns: ['id']
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -538,11 +553,11 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'missions_level_id_fkey'
-            columns: ['level_id']
+            foreignKeyName: "missions_level_id_fkey"
+            columns: ["level_id"]
             isOneToOne: false
-            referencedRelation: 'levels'
-            referencedColumns: ['id']
+            referencedRelation: "levels"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -576,11 +591,11 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'missoes_aula_id_fkey'
-            columns: ['aula_id']
+            foreignKeyName: "missoes_aula_id_fkey"
+            columns: ["aula_id"]
             isOneToOne: false
-            referencedRelation: 'aulas'
-            referencedColumns: ['id']
+            referencedRelation: "aulas"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -617,11 +632,11 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'oficina_custos_moto_id_fkey'
-            columns: ['moto_id']
+            foreignKeyName: "oficina_custos_moto_id_fkey"
+            columns: ["moto_id"]
             isOneToOne: false
-            referencedRelation: 'estoque_motos'
-            referencedColumns: ['id']
+            referencedRelation: "estoque_motos"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -661,11 +676,11 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'orders_user_id_fkey'
-            columns: ['user_id']
+            foreignKeyName: "orders_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: 'users'
-            referencedColumns: ['id']
+            referencedRelation: "users"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -720,18 +735,18 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'quizzes_aula_id_fkey'
-            columns: ['aula_id']
+            foreignKeyName: "quizzes_aula_id_fkey"
+            columns: ["aula_id"]
             isOneToOne: false
-            referencedRelation: 'aulas'
-            referencedColumns: ['id']
+            referencedRelation: "aulas"
+            referencedColumns: ["id"]
           },
           {
-            foreignKeyName: 'quizzes_lesson_id_fkey'
-            columns: ['lesson_id']
+            foreignKeyName: "quizzes_lesson_id_fkey"
+            columns: ["lesson_id"]
             isOneToOne: false
-            referencedRelation: 'lessons'
-            referencedColumns: ['id']
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -762,11 +777,11 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'recibos_venda_contrato_id_fkey'
-            columns: ['contrato_id']
+            foreignKeyName: "recibos_venda_contrato_id_fkey"
+            columns: ["contrato_id"]
             isOneToOne: false
-            referencedRelation: 'contratos'
-            referencedColumns: ['id']
+            referencedRelation: "contratos"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -791,18 +806,18 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'user_badges_badge_id_fkey'
-            columns: ['badge_id']
+            foreignKeyName: "user_badges_badge_id_fkey"
+            columns: ["badge_id"]
             isOneToOne: false
-            referencedRelation: 'badges'
-            referencedColumns: ['id']
+            referencedRelation: "badges"
+            referencedColumns: ["id"]
           },
           {
-            foreignKeyName: 'user_badges_user_id_fkey'
-            columns: ['user_id']
+            foreignKeyName: "user_badges_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: 'users'
-            referencedColumns: ['id']
+            referencedRelation: "users"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -815,10 +830,12 @@ export type Database = {
           completed_at: string | null
           id: string
           lesson_id: string | null
+          missao_completa: boolean | null
           missao_completada: boolean | null
           mission_id: string | null
           quiz_score: number | null
           score: number | null
+          status: string | null
           user_id: string | null
           xp_ganho: number | null
         }
@@ -830,10 +847,12 @@ export type Database = {
           completed_at?: string | null
           id?: string
           lesson_id?: string | null
+          missao_completa?: boolean | null
           missao_completada?: boolean | null
           mission_id?: string | null
           quiz_score?: number | null
           score?: number | null
+          status?: string | null
           user_id?: string | null
           xp_ganho?: number | null
         }
@@ -845,41 +864,43 @@ export type Database = {
           completed_at?: string | null
           id?: string
           lesson_id?: string | null
+          missao_completa?: boolean | null
           missao_completada?: boolean | null
           mission_id?: string | null
           quiz_score?: number | null
           score?: number | null
+          status?: string | null
           user_id?: string | null
           xp_ganho?: number | null
         }
         Relationships: [
           {
-            foreignKeyName: 'user_progress_aula_id_fkey'
-            columns: ['aula_id']
+            foreignKeyName: "user_progress_aula_id_fkey"
+            columns: ["aula_id"]
             isOneToOne: false
-            referencedRelation: 'aulas'
-            referencedColumns: ['id']
+            referencedRelation: "aulas"
+            referencedColumns: ["id"]
           },
           {
-            foreignKeyName: 'user_progress_lesson_id_fkey'
-            columns: ['lesson_id']
+            foreignKeyName: "user_progress_lesson_id_fkey"
+            columns: ["lesson_id"]
             isOneToOne: false
-            referencedRelation: 'lessons'
-            referencedColumns: ['id']
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
           },
           {
-            foreignKeyName: 'user_progress_mission_id_fkey'
-            columns: ['mission_id']
+            foreignKeyName: "user_progress_mission_id_fkey"
+            columns: ["mission_id"]
             isOneToOne: false
-            referencedRelation: 'missions'
-            referencedColumns: ['id']
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
           },
           {
-            foreignKeyName: 'user_progress_user_id_fkey'
-            columns: ['user_id']
+            foreignKeyName: "user_progress_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: 'users'
-            referencedColumns: ['id']
+            referencedRelation: "users"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -893,6 +914,7 @@ export type Database = {
           is_premium: boolean | null
           last_login_date: string | null
           name: string | null
+          nivel: number | null
           premium: boolean | null
           streak: number | null
           telefone: string | null
@@ -908,6 +930,7 @@ export type Database = {
           is_premium?: boolean | null
           last_login_date?: string | null
           name?: string | null
+          nivel?: number | null
           premium?: boolean | null
           streak?: number | null
           telefone?: string | null
@@ -923,6 +946,7 @@ export type Database = {
           is_premium?: boolean | null
           last_login_date?: string | null
           name?: string | null
+          nivel?: number | null
           premium?: boolean | null
           streak?: number | null
           telefone?: string | null
@@ -961,11 +985,11 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'weekly_challenges_user_id_fkey'
-            columns: ['user_id']
+            foreignKeyName: "weekly_challenges_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: 'users'
-            referencedColumns: ['id']
+            referencedRelation: "users"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -985,33 +1009,33 @@ export type Database = {
   }
 }
 
-type DatabaseWithoutInternals = Omit<Database, '__InternalSupabase'>
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
 
-type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, 'public'>]
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
-    | keyof (DefaultSchema['Tables'] & DefaultSchema['Views'])
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
-        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
-      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])[TableName] extends {
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
     ? R
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema['Tables'] &
-        DefaultSchema['Views'])
-    ? (DefaultSchema['Tables'] &
-        DefaultSchema['Views'])[DefaultSchemaTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
         Row: infer R
       }
       ? R
@@ -1020,23 +1044,23 @@ export type Tables<
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema['Tables']
+    | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
-    ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Insert: infer I
       }
       ? I
@@ -1045,23 +1069,23 @@ export type TablesInsert<
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema['Tables']
+    | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
-    ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Update: infer U
       }
       ? U
@@ -1070,36 +1094,36 @@ export type TablesUpdate<
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
-    | keyof DefaultSchema['Enums']
+    | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums']
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums'][EnumName]
-  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema['Enums']
-    ? DefaultSchema['Enums'][DefaultSchemaEnumNameOrOptions]
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof DefaultSchema['CompositeTypes']
+    | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
     : never = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes'][CompositeTypeName]
-  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema['CompositeTypes']
-    ? DefaultSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
 
 export const Constants = {
@@ -1107,6 +1131,7 @@ export const Constants = {
     Enums: {},
   },
 } as const
+
 
 // ====== DATABASE EXTENDED CONTEXT (auto-generated) ======
 // This section contains actual PostgreSQL column types, constraints, RLS policies,
@@ -1138,6 +1163,8 @@ export const Constants = {
 //   badge_nome: text (nullable)
 //   created_at: timestamp with time zone (nullable, default: now())
 //   conteudo_markdown: text (nullable)
+//   descricao: text (nullable)
+//   ordem: integer (nullable)
 // Table: badges
 //   id: uuid (not null, default: gen_random_uuid())
 //   name: text (not null)
@@ -1149,6 +1176,9 @@ export const Constants = {
 //   nome: text (nullable)
 //   requisito: text (nullable)
 //   beneficio: text (nullable)
+//   user_id: uuid (nullable)
+//   badge_id: text (nullable)
+//   data_conquista: timestamp with time zone (nullable, default: now())
 // Table: clientes
 //   id: uuid (not null, default: gen_random_uuid())
 //   nome: text (not null)
@@ -1316,6 +1346,8 @@ export const Constants = {
 //   badge_conquistada: boolean (nullable, default: false)
 //   completada: boolean (nullable, default: false)
 //   xp_ganho: integer (nullable, default: 0)
+//   status: text (nullable, default: 'bloqueada'::text)
+//   missao_completa: boolean (nullable, default: false)
 // Table: users
 //   id: uuid (not null)
 //   email: text (not null)
@@ -1330,6 +1362,7 @@ export const Constants = {
 //   telefone: text (nullable)
 //   premium: boolean (nullable, default: true)
 //   last_login_date: date (nullable)
+//   nivel: integer (nullable, default: 1)
 // Table: weekly_challenges
 //   id: uuid (not null, default: gen_random_uuid())
 //   user_id: uuid (nullable)
@@ -1347,6 +1380,7 @@ export const Constants = {
 // Table: badges
 //   FOREIGN KEY badges_level_id_fkey: FOREIGN KEY (level_id) REFERENCES levels(id) ON DELETE CASCADE
 //   PRIMARY KEY badges_pkey: PRIMARY KEY (id)
+//   FOREIGN KEY badges_user_id_fkey: FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE
 // Table: clientes
 //   PRIMARY KEY clientes_pkey: PRIMARY KEY (id)
 //   CHECK clientes_tipo_check: CHECK ((tipo = ANY (ARRAY['vendedor'::text, 'comprador'::text, 'lead'::text])))
@@ -1560,7 +1594,7 @@ export const Constants = {
 //     END LOOP;
 //   END;
 //   $function$
-//
+//   
 
 // --- INDEXES ---
 // Table: levels
@@ -1570,3 +1604,4 @@ export const Constants = {
 // Table: user_progress
 //   CREATE UNIQUE INDEX user_progress_user_id_lesson_id_key ON public.user_progress USING btree (user_id, lesson_id)
 //   CREATE UNIQUE INDEX user_progress_user_id_mission_id_key ON public.user_progress USING btree (user_id, mission_id)
+
