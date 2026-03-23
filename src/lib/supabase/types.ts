@@ -758,6 +758,7 @@ export type Database = {
       }
       users: {
         Row: {
+          cpf: string | null
           created_at: string | null
           current_level: number | null
           email: string
@@ -765,10 +766,12 @@ export type Database = {
           is_premium: boolean | null
           name: string | null
           streak: number | null
+          telefone: string | null
           updated_at: string | null
           xp: number | null
         }
         Insert: {
+          cpf?: string | null
           created_at?: string | null
           current_level?: number | null
           email: string
@@ -776,10 +779,12 @@ export type Database = {
           is_premium?: boolean | null
           name?: string | null
           streak?: number | null
+          telefone?: string | null
           updated_at?: string | null
           xp?: number | null
         }
         Update: {
+          cpf?: string | null
           created_at?: string | null
           current_level?: number | null
           email?: string
@@ -787,6 +792,7 @@ export type Database = {
           is_premium?: boolean | null
           name?: string | null
           streak?: number | null
+          telefone?: string | null
           updated_at?: string | null
           xp?: number | null
         }
@@ -1156,6 +1162,8 @@ export const Constants = {
 //   created_at: timestamp with time zone (nullable, default: now())
 //   updated_at: timestamp with time zone (nullable, default: now())
 //   is_premium: boolean (nullable, default: false)
+//   cpf: text (nullable)
+//   telefone: text (nullable)
 // Table: weekly_challenges
 //   id: uuid (not null, default: gen_random_uuid())
 //   user_id: uuid (nullable)
