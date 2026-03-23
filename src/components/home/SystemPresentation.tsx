@@ -3,7 +3,7 @@ import { Button3D } from '@/components/ui/button-3d'
 import { useAuth } from '@/hooks/use-auth'
 
 export function SystemPresentation() {
-  const { user, profile } = useAuth()
+  const { user } = useAuth()
   const navigate = useNavigate()
 
   return (
@@ -87,12 +87,8 @@ export function SystemPresentation() {
             <div className="inline-block mt-4">
               <Button3D
                 onClick={() => {
-                  if (user && profile?.is_premium) navigate('/learn')
-                  else if (user)
-                    document
-                      .getElementById('pricing')
-                      ?.scrollIntoView({ behavior: 'smooth' })
-                  else navigate('/signup')
+                  if (user) navigate('/dashboard/premium')
+                  else navigate('/welcome')
                 }}
                 variant="outline"
                 size="lg"

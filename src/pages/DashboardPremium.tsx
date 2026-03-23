@@ -7,14 +7,12 @@ import {
   Medal,
   Target,
   BrainCircuit,
-  PlayCircle,
   Loader2,
   Crown,
   Flame,
   Trophy,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { toast } from 'sonner'
 
 export default function DashboardPremium() {
   const { user, profile, loading } = useAuth()
@@ -26,7 +24,7 @@ export default function DashboardPremium() {
   useEffect(() => {
     if (loading) return
 
-    const checkPremiumAndLoad = async () => {
+    const loadDashboardData = async () => {
       if (!user) {
         navigate('/login')
         return
@@ -34,14 +32,6 @@ export default function DashboardPremium() {
 
       setIsLoading(true)
       try {
-        if (!profile?.premium) {
-          toast.error('Acesso Restrito', {
-            description: 'Área exclusiva para alunos Premium.',
-          })
-          navigate('/pricing')
-          return
-        }
-
         const { data: aulasData, error: aulasError } = await supabase
           .from('aulas')
           .select('*')
@@ -71,8 +61,8 @@ export default function DashboardPremium() {
       }
     }
 
-    checkPremiumAndLoad()
-  }, [user, profile, loading, navigate])
+    loadDashboardData()
+  }, [user, loading, navigate])
 
   if (loading || isLoading) {
     return (
@@ -116,10 +106,10 @@ export default function DashboardPremium() {
           </div>
           <div>
             <h1 className="text-2xl md:text-3xl font-extrabold text-white">
-              Dashboard Premium
+              Johnny Invest Dashboard
             </h1>
             <p className="text-purple-200 font-medium mt-1">
-              Sua jornada avançada em Opções e Derivativos.
+              Sua jornada completa em Opções e Derivativos.
             </p>
           </div>
         </div>

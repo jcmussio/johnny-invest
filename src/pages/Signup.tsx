@@ -21,11 +21,11 @@ export default function Signup() {
       if (error) throw error
 
       toast.success('Conta criada com sucesso!', {
-        description: 'Redirecionando para o plano...',
+        description: 'Complete seu perfil para acessar a plataforma.',
       })
 
-      // Redirecionamento direto para a página de preços sem passar pelo login
-      navigate('/pricing')
+      // Redirecionamento para a página de perfil completo
+      navigate('/cadastro-completo')
     } catch (error: any) {
       setLoadingLocal(false)
       toast.error('Erro de autenticação', {

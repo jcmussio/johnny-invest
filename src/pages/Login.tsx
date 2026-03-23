@@ -14,7 +14,7 @@ export default function Login() {
 
   useEffect(() => {
     if (!loading && user) {
-      navigate('/dashboard')
+      navigate('/dashboard/premium')
     }
   }, [user, loading, navigate])
 
@@ -26,7 +26,7 @@ export default function Login() {
       if (error) throw error
 
       toast.success('Login realizado com sucesso!')
-      navigate('/dashboard')
+      navigate('/dashboard/premium')
     } catch (error: any) {
       setLoadingLocal(false)
       toast.error('Erro de autenticação', {

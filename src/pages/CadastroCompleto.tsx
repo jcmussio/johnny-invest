@@ -21,8 +21,6 @@ export default function CadastroCompleto() {
 
     if (!authLoading) {
       if (!user) {
-        // Tolerância de 1.5s para evitar redirecionamentos indevidos causados
-        // por atraso na propagação do estado do provedor de autenticação logo após o signup
         timeout = setTimeout(() => {
           navigate('/login')
         }, 1500)
@@ -72,7 +70,7 @@ export default function CadastroCompleto() {
       if (error) throw error
 
       toast.success('Dados salvos com sucesso!')
-      navigate('/resumo-compra')
+      navigate('/dashboard/premium')
     } catch (error: any) {
       toast.error('Erro ao salvar dados', {
         description:
@@ -168,7 +166,7 @@ export default function CadastroCompleto() {
             className="w-full mt-6 h-14 text-[15px]"
             disabled={loadingLocal}
           >
-            {loadingLocal ? 'PROCESSANDO...' : 'CONTINUAR PARA PAGAMENTO'}
+            {loadingLocal ? 'PROCESSANDO...' : 'ACESSAR PLATAFORMA'}
           </Button3D>
         </form>
       </div>
