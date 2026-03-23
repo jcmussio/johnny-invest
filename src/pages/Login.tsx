@@ -16,7 +16,7 @@ export default function Login() {
   useEffect(() => {
     if (!loading && user) {
       if (profile?.is_premium) {
-        navigate('/learn')
+        navigate('/dashboard')
       } else {
         navigate('/')
       }

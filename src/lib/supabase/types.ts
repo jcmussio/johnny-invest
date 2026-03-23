@@ -362,6 +362,7 @@ export type Database = {
           key_concepts: Json | null
           lesson_number: number | null
           level_id: string | null
+          number: number | null
           order: number
           suggested_infographic: string | null
           title: string
@@ -374,6 +375,7 @@ export type Database = {
           key_concepts?: Json | null
           lesson_number?: number | null
           level_id?: string | null
+          number?: number | null
           order: number
           suggested_infographic?: string | null
           title: string
@@ -386,6 +388,7 @@ export type Database = {
           key_concepts?: Json | null
           lesson_number?: number | null
           level_id?: string | null
+          number?: number | null
           order?: number
           suggested_infographic?: string | null
           title?: string
@@ -408,6 +411,7 @@ export type Database = {
           description: string | null
           id: string
           level_number: number
+          number: number | null
           objective: string | null
           title: string
           xp_required: number | null
@@ -418,6 +422,7 @@ export type Database = {
           description?: string | null
           id?: string
           level_number: number
+          number?: number | null
           objective?: string | null
           title: string
           xp_required?: number | null
@@ -428,6 +433,7 @@ export type Database = {
           description?: string | null
           id?: string
           level_number?: number
+          number?: number | null
           objective?: string | null
           title?: string
           xp_required?: number | null
@@ -655,6 +661,7 @@ export type Database = {
           id: string
           lesson_id: string | null
           quiz_score: number | null
+          score: number | null
           user_id: string | null
         }
         Insert: {
@@ -663,6 +670,7 @@ export type Database = {
           id?: string
           lesson_id?: string | null
           quiz_score?: number | null
+          score?: number | null
           user_id?: string | null
         }
         Update: {
@@ -671,6 +679,7 @@ export type Database = {
           id?: string
           lesson_id?: string | null
           quiz_score?: number | null
+          score?: number | null
           user_id?: string | null
         }
         Relationships: [
@@ -1006,6 +1015,7 @@ export const Constants = {
 //   lesson_number: integer (nullable)
 //   key_concepts: jsonb (nullable)
 //   suggested_infographic: text (nullable)
+//   number: integer (nullable)
 // Table: levels
 //   id: uuid (not null, default: gen_random_uuid())
 //   course_id: uuid (nullable)
@@ -1015,6 +1025,7 @@ export const Constants = {
 //   description: text (nullable)
 //   created_at: timestamp with time zone (nullable, default: now())
 //   objective: text (nullable)
+//   number: integer (nullable)
 // Table: oficina_custos
 //   id: uuid (not null, default: gen_random_uuid())
 //   moto_id: uuid (nullable)
@@ -1065,6 +1076,7 @@ export const Constants = {
 //   completed: boolean (nullable, default: false)
 //   quiz_score: integer (nullable, default: 0)
 //   completed_at: timestamp with time zone (nullable)
+//   score: integer (nullable, default: 0)
 // Table: users
 //   id: uuid (not null)
 //   email: text (not null)
@@ -1232,6 +1244,8 @@ export const Constants = {
 //   Policy "user_badges_read_own" (SELECT, PERMISSIVE) roles={authenticated}
 //     USING: (auth.uid() = user_id)
 // Table: user_progress
+//   Policy "user_progress_delete_own" (DELETE, PERMISSIVE) roles={authenticated}
+//     USING: (auth.uid() = user_id)
 //   Policy "user_progress_insert_own" (INSERT, PERMISSIVE) roles={authenticated}
 //     WITH CHECK: (auth.uid() = user_id)
 //   Policy "user_progress_read_own" (SELECT, PERMISSIVE) roles={authenticated}
