@@ -1,38 +1,53 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { Button3D } from '@/components/ui/button-3d'
-import { supabase } from '@/lib/supabase/client'
+import { useAuth } from '@/hooks/use-auth'
 import { toast } from 'sonner'
 import { Shield } from 'lucide-react'
+import { createStripeCheckout } from '@/services/stripe'
 
 export default function Signup() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loadingLocal, setLoadingLocal] = useState(false)
   const navigate = useNavigate()
+  const { signUp } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoadingLocal(true)
     try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/cadastro-completo`,
-        },
-      })
+      const { error } = await signUp(email, password)
 
       if (error) throw error
 
       toast.success('Conta criada com sucesso!', {
-        description: 'Redirecionando para o próximo passo...',
+        description: 'Redirecionando para o pagamento...',
       })
 
-      // Delay de 1 segundo estrito conforme solicitado, sem interferência de re-renders de contexto.
-      setTimeout(() => {
+      try {
+        const priceId = import.meta.env.VITE_STRIPE_PRICE_ID || 'price_dummy'
+        const { data: checkoutData, error: checkoutError } =
+          await createStripeCheckout(
+            priceId,
+            `${window.location.origin}/sucesso-pagamento`,
+            `${window.location.origin}/cadastro-completo`,
+          )
+
+        if (checkoutError) throw checkoutError
+
+        if (checkoutData?.url) {
+          window.location.href = checkoutData.url
+          return
+        }
+      } catch (stripeError) {
+        console.error('Stripe checkout error:', stripeError)
+        // Fallback em caso de erro na geração da sessão do Stripe
         navigate('/cadastro-completo')
-      }, 1000)
+        return
+      }
+
+      navigate('/cadastro-completo')
     } catch (error: any) {
       setLoadingLocal(false)
       toast.error('Erro de autenticação', {

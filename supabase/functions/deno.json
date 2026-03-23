@@ -1,6 +1,6 @@
 {
   "_versions": {
-    "stripe-checkout": 3,
+    "stripe-checkout": 4,
     "stripe-webhook": 1
   }
 }
