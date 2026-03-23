@@ -64,19 +64,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
           if (!insertError && mounted) {
             setProfile(newData)
-            setLoading(false)
-            return
           }
-        }
-
-        if (mounted) {
+        } else if (mounted) {
           setProfile(data)
-          setLoading(false)
         }
       } catch (err) {
         if (mounted) {
           setProfile(null)
-          setLoading(false)
         }
       }
     }
@@ -85,13 +79,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
       if (mounted) {
+        // Garantindo sincronia e removendo travamentos
         setSession(session)
         setUser(session?.user ?? null)
+        setLoading(false) // Unblock imediatamente
+
         if (session?.user) {
-          fetchProfile(session.user)
+          // Chamada assíncrona isolada para não travar o fluxo de autenticação (sem uso de await no callback)
+          setTimeout(() => {
+            fetchProfile(session.user)
+          }, 0)
         } else {
           setProfile(null)
-          setLoading(false)
         }
       }
     })
@@ -100,11 +99,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (mounted) {
         setSession(session)
         setUser(session?.user ?? null)
+        setLoading(false) // Unblock imediatamente
+
         if (session?.user) {
-          fetchProfile(session.user)
+          setTimeout(() => {
+            fetchProfile(session.user)
+          }, 0)
         } else {
           setProfile(null)
-          setLoading(false)
         }
       }
     })

@@ -24,6 +24,7 @@ export default function Signup() {
         description: 'Redirecionando para o plano...',
       })
 
+      // Redirecionamento direto para a página de preços sem passar pelo login
       navigate('/pricing')
     } catch (error: any) {
       setLoadingLocal(false)
@@ -80,6 +81,7 @@ export default function Signup() {
             variant="success"
             className="w-full mt-4"
             disabled={loadingLocal}
+            type="submit"
           >
             {loadingLocal ? 'Processando...' : 'Criar Conta'}
           </Button3D>
