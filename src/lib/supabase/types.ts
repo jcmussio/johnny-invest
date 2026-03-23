@@ -448,6 +448,53 @@ export type Database = {
           },
         ]
       }
+      missions: {
+        Row: {
+          correct_answer: string | null
+          created_at: string | null
+          description: string | null
+          difficulty: string | null
+          id: string
+          level_id: string | null
+          options: Json | null
+          scenario: string | null
+          title: string
+          xp_reward: number | null
+        }
+        Insert: {
+          correct_answer?: string | null
+          created_at?: string | null
+          description?: string | null
+          difficulty?: string | null
+          id?: string
+          level_id?: string | null
+          options?: Json | null
+          scenario?: string | null
+          title: string
+          xp_reward?: number | null
+        }
+        Update: {
+          correct_answer?: string | null
+          created_at?: string | null
+          description?: string | null
+          difficulty?: string | null
+          id?: string
+          level_id?: string | null
+          options?: Json | null
+          scenario?: string | null
+          title?: string
+          xp_reward?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'missions_level_id_fkey'
+            columns: ['level_id']
+            isOneToOne: false
+            referencedRelation: 'levels'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       oficina_custos: {
         Row: {
           created_at: string | null
@@ -660,6 +707,7 @@ export type Database = {
           completed_at: string | null
           id: string
           lesson_id: string | null
+          mission_id: string | null
           quiz_score: number | null
           score: number | null
           user_id: string | null
@@ -669,6 +717,7 @@ export type Database = {
           completed_at?: string | null
           id?: string
           lesson_id?: string | null
+          mission_id?: string | null
           quiz_score?: number | null
           score?: number | null
           user_id?: string | null
@@ -678,6 +727,7 @@ export type Database = {
           completed_at?: string | null
           id?: string
           lesson_id?: string | null
+          mission_id?: string | null
           quiz_score?: number | null
           score?: number | null
           user_id?: string | null
@@ -688,6 +738,13 @@ export type Database = {
             columns: ['lesson_id']
             isOneToOne: false
             referencedRelation: 'lessons'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'user_progress_mission_id_fkey'
+            columns: ['mission_id']
+            isOneToOne: false
+            referencedRelation: 'missions'
             referencedColumns: ['id']
           },
           {
@@ -1026,6 +1083,17 @@ export const Constants = {
 //   created_at: timestamp with time zone (nullable, default: now())
 //   objective: text (nullable)
 //   number: integer (nullable)
+// Table: missions
+//   id: uuid (not null, default: gen_random_uuid())
+//   level_id: uuid (nullable)
+//   title: text (not null)
+//   description: text (nullable)
+//   difficulty: text (nullable)
+//   scenario: text (nullable)
+//   options: jsonb (nullable)
+//   correct_answer: text (nullable)
+//   xp_reward: integer (nullable, default: 50)
+//   created_at: timestamp with time zone (nullable, default: now())
 // Table: oficina_custos
 //   id: uuid (not null, default: gen_random_uuid())
 //   moto_id: uuid (nullable)
@@ -1077,6 +1145,7 @@ export const Constants = {
 //   quiz_score: integer (nullable, default: 0)
 //   completed_at: timestamp with time zone (nullable)
 //   score: integer (nullable, default: 0)
+//   mission_id: uuid (nullable)
 // Table: users
 //   id: uuid (not null)
 //   email: text (not null)
@@ -1131,6 +1200,9 @@ export const Constants = {
 //   FOREIGN KEY levels_course_id_fkey: FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
 //   UNIQUE levels_course_id_level_number_key: UNIQUE (course_id, level_number)
 //   PRIMARY KEY levels_pkey: PRIMARY KEY (id)
+// Table: missions
+//   FOREIGN KEY missions_level_id_fkey: FOREIGN KEY (level_id) REFERENCES levels(id) ON DELETE CASCADE
+//   PRIMARY KEY missions_pkey: PRIMARY KEY (id)
 // Table: oficina_custos
 //   FOREIGN KEY oficina_custos_moto_id_fkey: FOREIGN KEY (moto_id) REFERENCES estoque_motos(id) ON DELETE RESTRICT
 //   PRIMARY KEY oficina_custos_pkey: PRIMARY KEY (id)
@@ -1150,9 +1222,11 @@ export const Constants = {
 //   FOREIGN KEY user_badges_user_id_fkey: FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 // Table: user_progress
 //   FOREIGN KEY user_progress_lesson_id_fkey: FOREIGN KEY (lesson_id) REFERENCES lessons(id) ON DELETE CASCADE
+//   FOREIGN KEY user_progress_mission_id_fkey: FOREIGN KEY (mission_id) REFERENCES missions(id) ON DELETE CASCADE
 //   PRIMARY KEY user_progress_pkey: PRIMARY KEY (id)
 //   FOREIGN KEY user_progress_user_id_fkey: FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 //   UNIQUE user_progress_user_id_lesson_id_key: UNIQUE (user_id, lesson_id)
+//   UNIQUE user_progress_user_id_mission_id_key: UNIQUE (user_id, mission_id)
 // Table: users
 //   FOREIGN KEY users_id_fkey: FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE
 //   PRIMARY KEY users_pkey: PRIMARY KEY (id)
@@ -1215,6 +1289,9 @@ export const Constants = {
 //     USING: true
 // Table: levels
 //   Policy "public_read_levels" (SELECT, PERMISSIVE) roles={authenticated}
+//     USING: true
+// Table: missions
+//   Policy "public_read_missions" (SELECT, PERMISSIVE) roles={authenticated}
 //     USING: true
 // Table: oficina_custos
 //   Policy "Autenticados" (ALL, PERMISSIVE) roles={public}
@@ -1303,3 +1380,4 @@ export const Constants = {
 //   CREATE UNIQUE INDEX user_badges_user_id_badge_id_key ON public.user_badges USING btree (user_id, badge_id)
 // Table: user_progress
 //   CREATE UNIQUE INDEX user_progress_user_id_lesson_id_key ON public.user_progress USING btree (user_id, lesson_id)
+//   CREATE UNIQUE INDEX user_progress_user_id_mission_id_key ON public.user_progress USING btree (user_id, mission_id)
