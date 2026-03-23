@@ -163,6 +163,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         emailRedirectTo: `${window.location.origin}/dashboard/premium`,
       },
     })
+
+    // Check if the user already exists (Supabase returns a fake user with empty identities for security reasons)
+    if (
+      data?.user &&
+      data.user.identities &&
+      data.user.identities.length === 0
+    ) {
+      return { data: null, error: new Error('user_already_exists') }
+    }
+
     return { data, error }
   }
 

@@ -18,7 +18,14 @@ export default function Signup() {
     try {
       const { error } = await signUp(email, password)
 
-      if (error) throw error
+      if (error) {
+        if (error.message === 'user_already_exists') {
+          throw new Error(
+            'Este email já está cadastrado. Por favor, vá para a página de login.',
+          )
+        }
+        throw error
+      }
 
       toast.success('Conta criada com sucesso!', {
         description: 'Complete seu perfil para acessar a plataforma.',
@@ -28,9 +35,8 @@ export default function Signup() {
       navigate('/cadastro-completo')
     } catch (error: any) {
       setLoadingLocal(false)
-      toast.error('Erro de autenticação', {
-        description:
-          error.message || 'Verifique suas credenciais e tente novamente.',
+      toast.error('Erro no cadastro', {
+        description: error.message || 'Verifique seus dados e tente novamente.',
       })
     }
   }

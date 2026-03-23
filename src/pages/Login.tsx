@@ -23,7 +23,18 @@ export default function Login() {
     setLoadingLocal(true)
     try {
       const { error } = await signIn(email, password)
-      if (error) throw error
+
+      if (error) {
+        if (
+          error.message === 'Invalid login credentials' ||
+          error.message?.includes('invalid_credentials')
+        ) {
+          throw new Error(
+            'Email ou senha incorretos. Verifique suas credenciais e tente novamente.',
+          )
+        }
+        throw error
+      }
 
       toast.success('Login realizado com sucesso!')
       navigate('/dashboard/premium')
