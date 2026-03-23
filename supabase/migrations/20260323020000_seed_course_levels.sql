@@ -26,9 +26,9 @@ BEGIN
     ON CONFLICT DO NOTHING;
 
     -- Inserir algumas aulas no Nível 1 para demonstração
-    INSERT INTO public.lessons (id, level_id, "number", title, content) VALUES
-    (les1_id, l1_id, 1, 'O que são Opções?', 'Uma opção é um contrato que dá o direito de compra ou venda...'),
-    (les2_id, l1_id, 2, 'Diferença entre Call e Put', 'Calls são opções de compra, Puts são opções de venda...')
+    INSERT INTO public.lessons (id, level_id, "number", "order", title, content) VALUES
+    (les1_id, l1_id, 1, 1, 'O que são Opções?', 'Uma opção é um contrato que dá o direito de compra ou venda...'),
+    (les2_id, l1_id, 2, 2, 'Diferença entre Call e Put', 'Calls são opções de compra, Puts são opções de venda...')
     ON CONFLICT DO NOTHING;
 
     -- Inserir quizzes vinculados às aulas
