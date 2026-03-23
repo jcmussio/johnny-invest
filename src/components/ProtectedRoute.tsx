@@ -5,20 +5,19 @@ import { toast } from 'sonner'
 import { Loader2 } from 'lucide-react'
 
 export function ProtectedRoute() {
-  const { user, profile, loading } = useAuth()
+  const { user, loading } = useAuth()
   const toastShown = useRef(false)
 
   useEffect(() => {
-    if (!loading && (!user || !profile?.is_premium)) {
+    if (!loading && !user) {
       if (!toastShown.current) {
         toast.error('Acesso Restrito', {
-          description:
-            'Você precisa adquirir o curso para acessar este conteúdo.',
+          description: 'Você precisa estar logado para acessar este conteúdo.',
         })
         toastShown.current = true
       }
     }
-  }, [user, profile, loading])
+  }, [user, loading])
 
   if (loading) {
     return (
@@ -28,8 +27,8 @@ export function ProtectedRoute() {
     )
   }
 
-  if (!user || !profile?.is_premium) {
-    return <Navigate to="/" replace />
+  if (!user) {
+    return <Navigate to="/login" replace />
   }
 
   return <Outlet />

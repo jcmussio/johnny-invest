@@ -1,27 +1,28 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { Button3D } from '@/components/ui/button-3d'
 import { useAuth } from '@/hooks/use-auth'
 import { toast } from 'sonner'
 import { Shield } from 'lucide-react'
 
 export default function Login() {
-  const [isLogin, setIsLogin] = useState(true)
+  const location = useLocation()
+  const [isLogin, setIsLogin] = useState(location.pathname !== '/signup')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loadingLocal, setLoadingLocal] = useState(false)
-  const { signIn, signUp, user, profile, loading } = useAuth()
+  const { signIn, signUp, user, loading } = useAuth()
   const navigate = useNavigate()
 
   useEffect(() => {
+    setIsLogin(location.pathname !== '/signup')
+  }, [location.pathname])
+
+  useEffect(() => {
     if (!loading && user) {
-      if (profile?.is_premium) {
-        navigate('/dashboard')
-      } else {
-        navigate('/')
-      }
+      navigate('/dashboard')
     }
-  }, [user, profile, loading, navigate])
+  }, [user, loading, navigate])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -35,7 +36,6 @@ export default function Login() {
         const { error } = await signUp(email, password)
         if (error) throw error
         toast.success('Conta criada com sucesso!')
-        setIsLogin(true)
       }
     } catch (error: any) {
       toast.error('Erro de autenticação', {
@@ -106,7 +106,10 @@ export default function Login() {
 
         <div className="mt-6 text-center">
           <button
-            onClick={() => setIsLogin(!isLogin)}
+            type="button"
+            onClick={() => {
+              navigate(isLogin ? '/signup' : '/login')
+            }}
             className="text-[#10b981] text-sm font-semibold hover:underline"
           >
             {isLogin
@@ -117,6 +120,7 @@ export default function Login() {
 
         <div className="mt-4 text-center">
           <button
+            type="button"
             onClick={() => navigate('/')}
             className="text-[#c0c0c0] text-xs hover:text-white"
           >
