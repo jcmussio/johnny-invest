@@ -15,6 +15,7 @@ import Login from './pages/Login'
 import Success from './pages/Success'
 import Layout from './components/Layout'
 import Missions from './pages/Missions'
+import Badges from './pages/Badges'
 import { AppProvider } from './stores/useAppStore'
 import { AuthProvider } from './hooks/use-auth'
 import { ProtectedRoute } from './components/ProtectedRoute'
@@ -38,6 +39,7 @@ const App = () => (
                 <Route path="/learn" element={<Learn />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/missions" element={<Missions />} />
+                <Route path="/badges" element={<Badges />} />
                 <Route path="/leaderboard" element={<Leaderboard />} />
                 <Route path="/shop" element={<Shop />} />
                 <Route path="/profile" element={<Profile />} />

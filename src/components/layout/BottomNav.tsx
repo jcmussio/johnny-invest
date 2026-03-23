@@ -1,12 +1,12 @@
 import { Link, useLocation } from 'react-router-dom'
 import { cn } from '@/lib/utils'
-import { Home, Trophy, Store, User, Target } from 'lucide-react'
+import { Home, Trophy, Store, User, Target, Medal } from 'lucide-react'
 
 const navItems = [
-  { label: 'APRENDER', icon: Home, path: '/' },
+  { label: 'APRENDER', icon: Home, path: '/dashboard' },
   { label: 'MISSÕES', icon: Target, path: '/missions' },
+  { label: 'BADGES', icon: Medal, path: '/badges' },
   { label: 'RANKING', icon: Trophy, path: '/leaderboard' },
-  { label: 'LOJA', icon: Store, path: '/shop' },
   { label: 'PERFIL', icon: User, path: '/profile' },
 ]
 
@@ -26,7 +26,7 @@ export function BottomNav() {
             <div className="relative flex items-center justify-center w-12 h-12">
               <item.icon
                 className={cn(
-                  'w-7 h-7 transition-all stroke-[2.5px]',
+                  'w-6 h-6 sm:w-7 sm:h-7 transition-all stroke-[2.5px]',
                   isActive ? 'text-duo-blue scale-110' : 'text-stone-400',
                 )}
               />
