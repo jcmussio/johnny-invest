@@ -4,7 +4,6 @@ import { Button3D } from '@/components/ui/button-3d'
 import { useAuth } from '@/hooks/use-auth'
 import { toast } from 'sonner'
 import { Shield } from 'lucide-react'
-import { createStripeCheckout } from '@/services/stripe'
 
 export default function Signup() {
   const [email, setEmail] = useState('')
@@ -22,32 +21,10 @@ export default function Signup() {
       if (error) throw error
 
       toast.success('Conta criada com sucesso!', {
-        description: 'Redirecionando para o pagamento...',
+        description: 'Redirecionando para o plano...',
       })
 
-      try {
-        const priceId = import.meta.env.VITE_STRIPE_PRICE_ID || 'price_dummy'
-        const { data: checkoutData, error: checkoutError } =
-          await createStripeCheckout(
-            priceId,
-            `${window.location.origin}/sucesso-pagamento`,
-            `${window.location.origin}/cadastro-completo`,
-          )
-
-        if (checkoutError) throw checkoutError
-
-        if (checkoutData?.url) {
-          window.location.href = checkoutData.url
-          return
-        }
-      } catch (stripeError) {
-        console.error('Stripe checkout error:', stripeError)
-        // Fallback em caso de erro na geração da sessão do Stripe
-        navigate('/cadastro-completo')
-        return
-      }
-
-      navigate('/cadastro-completo')
+      navigate('/pricing')
     } catch (error: any) {
       setLoadingLocal(false)
       toast.error('Erro de autenticação', {

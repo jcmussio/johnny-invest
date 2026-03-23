@@ -53,7 +53,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           .single()
 
         if (error && error.code === 'PGRST116') {
-          // Row not found, let's create it automatically for robustness
           const { data: newData, error: insertError } = await supabase
             .from('users')
             .insert({
@@ -121,7 +120,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/cadastro-completo`,
+        emailRedirectTo: `${window.location.origin}/pricing`,
       },
     })
     return { data, error }

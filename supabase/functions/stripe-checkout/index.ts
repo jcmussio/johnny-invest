@@ -10,7 +10,7 @@ Deno.serve(async (req: Request) => {
 
   try {
     const { priceId, successUrl, cancelUrl } = await req.json()
-    
+
     if (!priceId) {
       throw new Error('priceId is required')
     }
@@ -24,11 +24,14 @@ Deno.serve(async (req: Request) => {
     const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? ''
 
     const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: authHeader } }
+      global: { headers: { Authorization: authHeader } },
     })
-    
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
+
     if (authError || !user) {
       throw new Error('Not authenticated')
     }
@@ -42,7 +45,7 @@ Deno.serve(async (req: Request) => {
       apiVersion: '2023-10-16',
       httpClient: Stripe.createFetchHttpClient(),
     })
-    
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
@@ -52,32 +55,40 @@ Deno.serve(async (req: Request) => {
         },
       ],
       mode: 'subscription',
-      success_url: successUrl || `${req.headers.get('origin') ?? 'http://localhost:5173'}/success`,
-      cancel_url: cancelUrl || `${req.headers.get('origin') ?? 'http://localhost:5173'}/cancel`,
+      success_url:
+        successUrl ||
+        `${req.headers.get('origin') ?? 'http://localhost:5173'}/success`,
+      cancel_url:
+        cancelUrl ||
+        `${req.headers.get('origin') ?? 'http://localhost:5173'}/cancel`,
       client_reference_id: user.id,
       customer_email: user.email,
     })
 
-    const supabaseServiceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    const supabaseServiceRoleKey =
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey)
-    
-    await supabaseAdmin
-      .from('orders')
-      .insert({
-        user_id: user.id,
-        stripe_session_id: session.id,
-        status: 'pending'
-      })
+
+    await supabaseAdmin.from('orders').insert({
+      user_id: user.id,
+      stripe_session_id: session.id,
+      status: 'pending',
+    })
 
     return new Response(
       JSON.stringify({ sessionId: session.id, url: session.url }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
     )
   } catch (error) {
     console.error('Checkout error:', error)
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
-      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      JSON.stringify({
+        error: error instanceof Error ? error.message : 'Unknown error',
+      }),
+      {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      },
     )
   }
 })

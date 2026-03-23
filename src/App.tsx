@@ -16,6 +16,7 @@ import Signup from './pages/Signup'
 import SucessoPagamento from './pages/SucessoPagamento'
 import CadastroCompleto from './pages/CadastroCompleto'
 import ResumoCompra from './pages/ResumoCompra'
+import Pricing from './pages/Pricing'
 import Layout from './components/Layout'
 import Missions from './pages/Missions'
 import Badges from './pages/Badges'
@@ -39,6 +40,7 @@ const App = () => (
             <Route path="/signup" element={<Signup />} />
             <Route path="/cadastro-completo" element={<CadastroCompleto />} />
             <Route path="/resumo-compra" element={<ResumoCompra />} />
+            <Route path="/pricing" element={<Pricing />} />
 
             {/* Rotas Protegidas */}
             <Route element={<ProtectedRoute />}>
