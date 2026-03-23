@@ -17,9 +17,11 @@ export function Hero() {
             </span>
           </div>
 
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 leading-[1.2] drop-shadow-lg">
-            Aprenda Opções Como Você Aprende um Idioma — Progressivo, Intuitivo
-            e Viciante
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 leading-[1.2] drop-shadow-lg flex flex-col gap-2">
+            <span className="block text-2xl md:text-3xl lg:text-4xl text-[#10b981] opacity-90">
+              Aprenda Opções Como Você Aprende um Idioma
+            </span>
+            <span className="block">Progressivo, Intuitivo e Viciante</span>
           </h1>
 
           <p className="text-lg md:text-xl text-[#c0c0c0] mb-8 max-w-2xl mx-auto lg:mx-0 leading-[1.6]">

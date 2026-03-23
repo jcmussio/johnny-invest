@@ -1,10 +1,21 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Logo } from '@/components/ui/logo'
 
 export function Header() {
+  const location = useLocation()
+  const navigate = useNavigate()
+
   const scrollTo = (id: string) => {
-    const el = document.getElementById(id)
-    if (el) el.scrollIntoView({ behavior: 'smooth' })
+    if (location.pathname !== '/') {
+      navigate('/')
+      setTimeout(() => {
+        const el = document.getElementById(id)
+        if (el) el.scrollIntoView({ behavior: 'smooth' })
+      }, 100)
+    } else {
+      const el = document.getElementById(id)
+      if (el) el.scrollIntoView({ behavior: 'smooth' })
+    }
   }
 
   return (
@@ -18,24 +29,18 @@ export function Header() {
         </Link>
 
         <nav className="hidden md:flex items-center gap-8">
-          <button
-            onClick={() => scrollTo('hero')}
+          <Link
+            to="/"
             className="text-[#c0c0c0] font-semibold hover:text-white transition-all duration-300 hover:drop-shadow-[0_0_8px_rgba(192,192,192,0.8)]"
           >
             Home
-          </button>
-          <button
-            onClick={() => scrollTo('blog')}
+          </Link>
+          <Link
+            to="/blog"
             className="text-[#c0c0c0] font-semibold hover:text-white transition-all duration-300 hover:drop-shadow-[0_0_8px_rgba(192,192,192,0.8)]"
           >
             Blog
-          </button>
-          <button
-            onClick={() => scrollTo('sobre')}
-            className="text-[#c0c0c0] font-semibold hover:text-white transition-all duration-300 hover:drop-shadow-[0_0_8px_rgba(192,192,192,0.8)]"
-          >
-            Sobre
-          </button>
+          </Link>
           <button
             onClick={() => scrollTo('faq')}
             className="text-[#c0c0c0] font-semibold hover:text-white transition-all duration-300 hover:drop-shadow-[0_0_8px_rgba(192,192,192,0.8)]"
@@ -45,12 +50,6 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-4">
-          <Link
-            to="/login"
-            className="text-[#c0c0c0] font-bold text-sm hover:text-white transition-colors uppercase tracking-wider hidden sm:block"
-          >
-            Entrar
-          </Link>
           <Link
             to="/signup"
             className="bg-[#10b981] hover:bg-[#0e9f6e] text-white px-6 py-2.5 rounded-lg font-bold text-sm uppercase tracking-widest border-b-4 border-[#047857] active:translate-y-[4px] active:border-b-0 transition-all duration-300 inline-block text-center"

@@ -18,8 +18,10 @@ export function SystemPresentation() {
           </h2>
           <p className="text-lg text-[#c0c0c0] max-w-3xl mx-auto">
             A primeira metodologia do Brasil que une a eficiência do
-            micro-learning gamificado ao mercado de opções. Esqueça aulas
-            monótonas de 2 horas.
+            micro-learning gamificado ao mercado de opções. Estamos em versão
+            Beta — ainda elaborando e refinando o sistema para oferecer a melhor
+            experiência. Esqueça aulas monótonas de 2 horas. Aqui você aprende
+            em 5-10 minutos, com foco total em resultados.
           </p>
         </div>
 

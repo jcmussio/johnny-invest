@@ -47,9 +47,12 @@ export function Differentials() {
             denso, teórico e chato. Pegamos a mecânica dos aplicativos mais
             viciantes do mundo e aplicamos ao mercado de opções.
           </p>
-          <div className="inline-flex items-center gap-3 bg-[#10b981]/10 text-[#10b981] px-5 py-3 rounded-lg border border-[#10b981]/20 font-semibold">
-            <UserCheck className="w-5 h-5" /> Mais de 5.000 alunos já
-            transformaram sua rotina.
+          <div className="inline-flex items-center gap-3 bg-[#10b981]/10 text-[#10b981] px-5 py-3 rounded-lg border border-[#10b981]/20 font-semibold text-left">
+            <UserCheck className="w-5 h-5 shrink-0" />
+            <span>
+              Centenas de investidores já estão descobrindo que aprender opções
+              não precisa ser chato ou cansativo.
+            </span>
           </div>
         </div>
       </div>

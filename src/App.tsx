@@ -28,6 +28,7 @@ const CadastroCompleto = lazy(() => import('./pages/CadastroCompleto'))
 const Welcome = lazy(() => import('./pages/Welcome'))
 const Missions = lazy(() => import('./pages/Missions'))
 const Badges = lazy(() => import('./pages/Badges'))
+const BlogPage = lazy(() => import('./pages/BlogPage'))
 
 const LoadingFallback = () => (
   <div className="min-h-screen bg-[#1a2a4a] flex items-center justify-center">
@@ -47,6 +48,7 @@ const App = () => (
           <Suspense fallback={<LoadingFallback />}>
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/blog" element={<BlogPage />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/cadastro-completo" element={<CadastroCompleto />} />

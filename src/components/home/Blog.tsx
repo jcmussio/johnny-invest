@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { Button3D } from '@/components/ui/button-3d'
 import { ArrowRight } from 'lucide-react'
 
@@ -35,9 +36,12 @@ export function Blog() {
               Mantenha-se atualizado com nossas análises de mercado.
             </p>
           </div>
-          <button className="text-[#10b981] font-bold hover:underline flex items-center gap-2">
+          <Link
+            to="/blog"
+            className="text-[#10b981] font-bold hover:underline flex items-center gap-2"
+          >
             Ver todos <ArrowRight className="w-4 h-4" />
-          </button>
+          </Link>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8 mb-20">
@@ -62,9 +66,12 @@ export function Blog() {
                 <p className="text-[#c0c0c0] text-sm mb-4 line-clamp-2">
                   {post.desc}
                 </p>
-                <button className="text-white text-sm font-semibold hover:text-[#10b981] transition-colors">
+                <Link
+                  to="/blog"
+                  className="text-white text-sm font-semibold hover:text-[#10b981] transition-colors"
+                >
                   Leia mais &rarr;
-                </button>
+                </Link>
               </div>
             </article>
           ))}
@@ -72,30 +79,43 @@ export function Blog() {
 
         <div className="bg-gradient-to-r from-[#22355c] to-[#1a2a4a] border border-[#c0c0c0]/20 rounded-2xl p-8 md:p-12 text-center max-w-4xl mx-auto shadow-xl">
           <h3 className="text-2xl font-bold text-white mb-4">
-            Junte-se a 10.000+ investidores
+            Fique Atento às Novidades
           </h3>
           <p className="text-[#c0c0c0] mb-8">
-            Receba estratégias de opções diretamente na sua caixa de entrada
-            toda semana.
+            Receba estratégias de opções e insights exclusivos direto no seu
+            email.
           </p>
-          <form
-            className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto"
-            onSubmit={(e) => e.preventDefault()}
-          >
-            <input
-              type="email"
-              placeholder="Seu melhor e-mail"
-              className="flex-1 bg-[#1a2a4a] border border-[#c0c0c0]/30 rounded-lg px-4 h-12 text-white focus:outline-none focus:border-[#10b981]"
-              required
-            />
-            <Button3D
-              variant="success"
-              size="lg"
-              className="h-12 w-full sm:w-auto"
+          <div className="max-w-xl mx-auto space-y-5">
+            <form
+              className="flex flex-col sm:flex-row gap-4"
+              onSubmit={(e) => e.preventDefault()}
             >
-              Inscrever-se
-            </Button3D>
-          </form>
+              <input
+                type="email"
+                placeholder="Seu melhor e-mail"
+                className="flex-1 bg-[#1a2a4a] border border-[#c0c0c0]/30 rounded-lg px-4 h-12 text-white focus:outline-none focus:border-[#10b981]"
+                required
+              />
+              <Button3D
+                variant="success"
+                size="lg"
+                className="h-12 w-full sm:w-auto shrink-0"
+              >
+                Inscrever-se para Atualizações
+              </Button3D>
+            </form>
+
+            <div className="pt-2 border-t border-[#c0c0c0]/10 mt-6">
+              <Button3D
+                asChild
+                variant="outline"
+                size="lg"
+                className="h-12 w-full sm:w-auto mx-auto border-[#c0c0c0] text-[#c0c0c0] hover:text-white bg-[#1a2a4a]/30 mt-4"
+              >
+                <Link to="/blog">Acessar o Blog</Link>
+              </Button3D>
+            </div>
+          </div>
         </div>
       </div>
     </section>
