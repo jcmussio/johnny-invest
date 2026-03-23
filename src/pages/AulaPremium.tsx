@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/use-auth'
@@ -24,7 +24,6 @@ import { cn } from '@/lib/utils'
 export default function AulaPremium() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { toast } = useToast()
   const { user, loading: authLoading } = useAuth()
   const [aula, setAula] = useState<any>(null)
   const [prog, setProg] = useState<any>(null)
@@ -32,13 +31,10 @@ export default function AulaPremium() {
   const [loading, setLoading] = useState(true)
   const [showBadge, setShowBadge] = useState<string | null>(null)
 
-  const completingRef = useRef(false)
-
   useEffect(() => {
     if (!id) return
     const fetchAula = async () => {
       try {
-        // Fetch current lesson
         const { data: aulaData } = await supabase
           .from('aulas')
           .select('*')
@@ -46,7 +42,6 @@ export default function AulaPremium() {
           .single()
         setAula(aulaData)
 
-        // Fetch all lessons to determine the next one based on order
         if (aulaData) {
           const { data: allAulas } = await supabase
             .from('aulas')
@@ -62,7 +57,6 @@ export default function AulaPremium() {
           }
         }
 
-        // Fetch user progress if logged in
         if (user) {
           const { data: progData } = await supabase
             .from('user_progress')
@@ -86,78 +80,6 @@ export default function AulaPremium() {
     }
   }, [id, user, authLoading])
 
-  // Auto-complete lesson logic via Edge Function
-  useEffect(() => {
-    if (
-      user &&
-      prog &&
-      prog.quiz_score >= 70 &&
-      prog.missao_completada &&
-      !prog.completada &&
-      !completingRef.current
-    ) {
-      const completeAula = async () => {
-        completingRef.current = true
-        try {
-          console.log('Calling Edge Function: update-user-progress')
-          const { data, error } = await supabase.functions.invoke(
-            'update-user-progress',
-            {
-              body: {
-                user_id: user.id,
-                aula_id: id,
-                quiz_score: prog.quiz_score,
-                missao_completa: prog.missao_completada,
-              },
-            },
-          )
-
-          console.log('Edge Function Response:', data, error)
-
-          if (error) throw error
-
-          if (data?.status === 'sucesso') {
-            const newXpGanho = (prog.xp_ganho || 0) + 100
-            setProg((prev: any) => ({
-              ...prev,
-              completada: true,
-              badge_conquistada: !!data.badge_nome,
-              xp_ganho: newXpGanho,
-            }))
-
-            toast({
-              title: 'Parabéns!',
-              description: data.message || 'Aula concluída com sucesso.',
-            })
-
-            if (data.badge_nome) {
-              setShowBadge(data.badge_nome)
-            }
-          } else {
-            toast({
-              title: 'Aviso',
-              description:
-                data?.message || 'Ocorreu um erro ao atualizar o progresso.',
-              variant: 'destructive',
-            })
-          }
-        } catch (e) {
-          console.error('Error completing aula via Edge Function', e)
-        } finally {
-          completingRef.current = false
-        }
-      }
-      completeAula()
-    }
-  }, [
-    prog?.quiz_score,
-    prog?.missao_completada,
-    prog?.completada,
-    id,
-    user,
-    toast,
-  ])
-
   if (loading || authLoading)
     return (
       <div className="flex h-screen items-center justify-center bg-slate-50">
@@ -172,7 +94,7 @@ export default function AulaPremium() {
       </div>
     )
 
-  const hasQuiz = (prog?.quiz_score || 0) >= 70
+  const hasQuiz = (prog?.quiz_score || 0) >= 100
   const hasMissao = prog?.missao_completada
   const isCompleted = prog?.completada
 
@@ -398,11 +320,11 @@ export default function AulaPremium() {
                   {hasQuiz ? 'Refazer Quiz' : 'Fazer Quiz'}
                 </Button3D>
                 {prog?.quiz_score !== undefined &&
-                  prog.quiz_score < 70 &&
+                  prog.quiz_score < 100 &&
                   !hasQuiz && (
                     <p className="text-xs font-bold text-red-500 text-center px-4 bg-red-50 py-2 rounded-xl border border-red-100">
-                      Complete o quiz com 70%+ para desbloquear a próxima aula.
-                      Atual: {prog.quiz_score}%
+                      Complete o quiz com 100% para avançar. Atual:{' '}
+                      {prog.quiz_score}%
                     </p>
                   )}
               </div>
@@ -464,8 +386,15 @@ export default function AulaPremium() {
                 <Lock className="w-6 h-6 text-slate-300" />
               )}
             </div>
-            {hasQuiz && (
-              <div className="text-xs font-black text-emerald-700 bg-emerald-200 px-3 py-1.5 rounded-lg w-fit mt-1 uppercase tracking-widest border border-emerald-300">
+            {prog?.quiz_score !== undefined && (
+              <div
+                className={cn(
+                  'text-xs font-black px-3 py-1.5 rounded-lg w-fit mt-1 uppercase tracking-widest border',
+                  hasQuiz
+                    ? 'text-emerald-700 bg-emerald-200 border-emerald-300'
+                    : 'text-slate-600 bg-slate-100 border-slate-200',
+                )}
+              >
                 Score: {prog.quiz_score}%
               </div>
             )}

@@ -16,7 +16,6 @@ export default function MissaoPremium() {
   const [answer, setAnswer] = useState('')
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null)
   const [submitting, setSubmitting] = useState(false)
-  const [isFinished, setIsFinished] = useState(false)
 
   useEffect(() => {
     if (!id) return
@@ -47,43 +46,14 @@ export default function MissaoPremium() {
     if (isCorrect) {
       if (user) {
         try {
-          const { data: existing } = await supabase
-            .from('user_progress')
-            .select('*')
-            .eq('user_id', user.id)
-            .eq('aula_id', id)
-            .single()
-
-          if (!existing || !existing.missao_completada) {
-            const reward = missao.xp_reward || 150
-            const { data: u } = await supabase
-              .from('users')
-              .select('xp')
-              .eq('id', user.id)
-              .single()
-            if (u)
-              await supabase
-                .from('users')
-                .update({ xp: (u.xp || 0) + reward })
-                .eq('id', user.id)
-
-            if (existing) {
-              await supabase
-                .from('user_progress')
-                .update({
-                  missao_completada: true,
-                  xp_ganho: (existing.xp_ganho || 0) + reward,
-                })
-                .eq('id', existing.id)
-            } else {
-              await supabase.from('user_progress').insert({
-                user_id: user.id,
-                aula_id: id,
-                missao_completada: true,
-                xp_ganho: reward,
-              })
-            }
-          }
+          await supabase.functions.invoke('update-user-progress', {
+            body: {
+              user_id: user.id,
+              aula_id: id,
+              missao_completa: true,
+              status: 'em_progresso',
+            },
+          })
         } catch (e) {
           console.error(e)
         }
@@ -94,7 +64,6 @@ export default function MissaoPremium() {
     }
 
     setSubmitting(false)
-    setIsFinished(true)
   }
 
   if (loading)
@@ -141,7 +110,6 @@ export default function MissaoPremium() {
             onChange={(e) => {
               setAnswer(e.target.value)
               setFeedback(null)
-              setIsFinished(false)
             }}
             placeholder="Digite o valor numérico"
             disabled={submitting || feedback === 'correct'}

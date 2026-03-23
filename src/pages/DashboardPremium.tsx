@@ -2,18 +2,8 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/use-auth'
-import {
-  CheckCircle,
-  Medal,
-  Target,
-  BrainCircuit,
-  Loader2,
-  Crown,
-  Flame,
-  Trophy,
-  Lock,
-} from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { AulaCard } from '@/components/AulaCard'
+import { Medal, Target, Loader2, Crown, Flame, Trophy } from 'lucide-react'
 
 export default function DashboardPremium() {
   const { user, profile, loading } = useAuth()
@@ -94,7 +84,11 @@ export default function DashboardPremium() {
   const processedAulas = aulasOrdenadas.map((aula) => {
     const prog = progress[aula.id] || {}
     const isCompleted = prog.completada || false
-    const isUnlocked = previousCompleted
+    const isUnlocked =
+      previousCompleted ||
+      prog.status === 'desbloqueada' ||
+      prog.status === 'em_progresso' ||
+      prog.status === 'completa'
 
     if (!isCompleted) {
       previousCompleted = false
@@ -105,7 +99,7 @@ export default function DashboardPremium() {
       prog,
       isCompleted,
       isUnlocked,
-      hasQuiz: (prog.quiz_score || 0) >= 70,
+      hasQuiz: (prog.quiz_score || 0) >= 100,
       hasMissao: prog.missao_completada || false,
     }
   })
@@ -197,114 +191,9 @@ export default function DashboardPremium() {
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {aulasPorNivel[nivel].map((aula: any) => {
-                const { isCompleted, isUnlocked, hasQuiz, hasMissao } = aula
-
-                return (
-                  <div
-                    key={aula.id}
-                    onClick={() =>
-                      isUnlocked ? navigate(`/aula/${aula.id}`) : null
-                    }
-                    className={cn(
-                      'bg-white border-2 rounded-xl p-5 flex flex-col gap-4 transition-all shadow-sm group',
-                      isUnlocked
-                        ? 'cursor-pointer hover:border-purple-400 hover:shadow-md'
-                        : 'opacity-60 grayscale cursor-not-allowed border-slate-200',
-                      isCompleted
-                        ? 'border-emerald bg-emerald-50/20'
-                        : isUnlocked
-                          ? 'border-silver'
-                          : '',
-                    )}
-                  >
-                    <div>
-                      <div className="flex justify-between items-start mb-1">
-                        <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                          Aula {aula.numero_aula}
-                        </span>
-                        {isCompleted && (
-                          <CheckCircle className="w-5 h-5 text-emerald" />
-                        )}
-                        {!isUnlocked && (
-                          <Lock className="w-4 h-4 text-slate-400" />
-                        )}
-                      </div>
-                      <h3 className="font-bold text-navy text-lg leading-tight line-clamp-2">
-                        {aula.titulo}
-                      </h3>
-                      <p className="text-sm text-slate-500 mt-1 line-clamp-1">
-                        {aula.objetivo}
-                      </p>
-                    </div>
-
-                    <div className="flex gap-2 mt-auto">
-                      <div
-                        className={cn(
-                          'flex flex-col items-center justify-center py-2 rounded-lg border flex-1 text-center gap-1',
-                          hasQuiz
-                            ? 'bg-emerald-50 border-emerald-200'
-                            : 'bg-slate-50 border-slate-200',
-                        )}
-                      >
-                        <BrainCircuit
-                          className={cn(
-                            'w-4 h-4',
-                            hasQuiz ? 'text-emerald-600' : 'text-slate-400',
-                          )}
-                        />
-                        <span
-                          className={cn(
-                            'text-[9px] font-bold uppercase',
-                            hasQuiz ? 'text-emerald-700' : 'text-slate-500',
-                          )}
-                        >
-                          Quiz
-                        </span>
-                      </div>
-                      <div
-                        className={cn(
-                          'flex flex-col items-center justify-center py-2 rounded-lg border flex-1 text-center gap-1',
-                          hasMissao
-                            ? 'bg-orange-50 border-orange-200'
-                            : 'bg-slate-50 border-slate-200',
-                        )}
-                      >
-                        <Target
-                          className={cn(
-                            'w-4 h-4',
-                            hasMissao ? 'text-orange-600' : 'text-slate-400',
-                          )}
-                        />
-                        <span
-                          className={cn(
-                            'text-[9px] font-bold uppercase',
-                            hasMissao ? 'text-orange-700' : 'text-slate-500',
-                          )}
-                        >
-                          Missão
-                        </span>
-                      </div>
-                      <div
-                        className={cn(
-                          'flex items-center justify-center rounded-lg flex-1 text-center font-bold text-xs transition-colors',
-                          !isUnlocked
-                            ? 'bg-slate-100 text-slate-400'
-                            : !isCompleted
-                              ? 'bg-purple-100 text-purple-700 group-hover:bg-purple-600 group-hover:text-white'
-                              : 'bg-emerald-100 text-emerald-700',
-                        )}
-                      >
-                        {!isUnlocked
-                          ? 'BLOQUEADA'
-                          : isCompleted
-                            ? 'REVISAR'
-                            : 'ACESSAR'}
-                      </div>
-                    </div>
-                  </div>
-                )
-              })}
+              {aulasPorNivel[nivel].map((aula: any) => (
+                <AulaCard key={aula.id} aula={aula} />
+              ))}
             </div>
           </div>
         ))}

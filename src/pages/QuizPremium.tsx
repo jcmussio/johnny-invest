@@ -20,7 +20,6 @@ export default function QuizPremium() {
   const [corrects, setCorrects] = useState(0)
   const [finished, setFinished] = useState(false)
   const [score, setScore] = useState(0)
-  const [xpGanho, setXpGanho] = useState(0)
 
   useEffect(() => {
     if (!id) return
@@ -52,47 +51,16 @@ export default function QuizPremium() {
     const cappedScore = Math.min(finalScore, 100)
     setScore(cappedScore)
 
-    if (cappedScore >= 70 && user) {
+    if (user) {
       try {
-        const { data: existing } = await supabase
-          .from('user_progress')
-          .select('*')
-          .eq('user_id', user.id)
-          .eq('aula_id', id)
-          .single()
-
-        if (!existing || (existing.quiz_score || 0) < 70) {
-          setXpGanho(50)
-          const { data: u } = await supabase
-            .from('users')
-            .select('xp')
-            .eq('id', user.id)
-            .single()
-          if (u)
-            await supabase
-              .from('users')
-              .update({ xp: (u.xp || 0) + 50 })
-              .eq('id', user.id)
-        }
-
-        if (existing) {
-          await supabase
-            .from('user_progress')
-            .update({
-              quiz_score: Math.max(existing.quiz_score || 0, cappedScore),
-              xp_ganho:
-                (existing.xp_ganho || 0) +
-                (!existing || (existing.quiz_score || 0) < 70 ? 50 : 0),
-            })
-            .eq('id', existing.id)
-        } else {
-          await supabase.from('user_progress').insert({
+        await supabase.functions.invoke('update-user-progress', {
+          body: {
             user_id: user.id,
             aula_id: id,
             quiz_score: cappedScore,
-            xp_ganho: 50,
-          })
-        }
+            status: 'em_progresso',
+          },
+        })
       } catch (e) {
         console.error(e)
       }
@@ -106,7 +74,6 @@ export default function QuizPremium() {
       setSelectedOp(null)
       setShowFeedback(false)
     } else {
-      // correctly pass accumulated exact corrects state
       finishQuiz(corrects)
     }
   }
@@ -126,7 +93,7 @@ export default function QuizPremium() {
     )
 
   if (finished) {
-    const passed = score >= 70
+    const passed = score >= 100
     return (
       <div className="flex flex-col h-screen max-w-3xl mx-auto bg-white items-center justify-center p-6 text-center animate-fade-in-up shadow-2xl border-x">
         <Trophy
@@ -144,11 +111,6 @@ export default function QuizPremium() {
             {score}%
           </span>
         </p>
-        {passed && xpGanho > 0 && user && (
-          <p className="text-emerald-600 font-bold text-lg mb-8 bg-emerald-100 px-6 py-2 rounded-full border border-emerald-200">
-            +{xpGanho} XP Ganhos!
-          </p>
-        )}
         <Button3D
           variant="super"
           size="lg"
