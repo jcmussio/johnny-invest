@@ -10,7 +10,7 @@ export default function Layout() {
   const location = useLocation()
 
   // Lesson page handles its own layout
-  if (location.pathname === '/lesson') {
+  if (location.pathname.startsWith('/lesson')) {
     return <Outlet />
   }
 

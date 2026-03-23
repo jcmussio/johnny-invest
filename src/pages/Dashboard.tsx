@@ -150,7 +150,7 @@ export default function Dashboard() {
             nextLessons.map((lesson) => (
               <div
                 key={lesson.id}
-                onClick={() => navigate('/lesson')}
+                onClick={() => navigate(`/lesson/${lesson.id}`)}
                 className="border-2 border-silver rounded-xl p-5 bg-white hover:border-navy transition-colors flex flex-col justify-between group cursor-pointer shadow-sm hover:shadow-md"
               >
                 <div>
@@ -182,47 +182,58 @@ export default function Dashboard() {
           Trilha do Investidor
         </h2>
         <div className="flex flex-col gap-4">
-          {levels.map((level) => (
-            <div
-              key={level.id}
-              className="bg-white border-2 border-silver shadow-sm rounded-xl p-6 flex flex-col md:flex-row gap-6 items-start md:items-center hover:border-slate-300 transition-colors"
-            >
-              <div className="w-16 h-16 rounded-full bg-blue-50 border-2 border-navy/10 flex items-center justify-center shrink-0">
-                <span className="text-2xl font-black text-navy">
-                  {level.number}
-                </span>
-              </div>
-              <div className="flex-1">
-                <h3 className="text-xl font-bold text-navy">{level.title}</h3>
-                <p className="text-slate-500 font-medium mt-1 text-sm md:text-base">
-                  {level.description}
-                </p>
-                <div className="flex flex-wrap gap-3 mt-4">
-                  <span className="inline-flex items-center text-xs font-bold bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg">
-                    <BookOpen className="w-3.5 h-3.5 mr-1.5" />{' '}
-                    {level.lessons?.length || 0} Aulas
-                  </span>
-                  <span className="inline-flex items-center text-xs font-bold bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg">
-                    <Trophy className="w-3.5 h-3.5 mr-1.5" />
-                    {level.lessons?.reduce(
-                      (acc, curr) => acc + (curr.quizzes?.length || 0),
-                      0,
-                    ) || 0}{' '}
-                    Quizzes
+          {levels.map((level) => {
+            const sortedLessons = [...(level.lessons || [])].sort(
+              (a, b) => a.number - b.number,
+            )
+            const firstLesson = sortedLessons[0]
+
+            return (
+              <div
+                key={level.id}
+                className="bg-white border-2 border-silver shadow-sm rounded-xl p-6 flex flex-col md:flex-row gap-6 items-start md:items-center hover:border-slate-300 transition-colors"
+              >
+                <div className="w-16 h-16 rounded-full bg-blue-50 border-2 border-navy/10 flex items-center justify-center shrink-0">
+                  <span className="text-2xl font-black text-navy">
+                    {level.number}
                   </span>
                 </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold text-navy">{level.title}</h3>
+                  <p className="text-slate-500 font-medium mt-1 text-sm md:text-base">
+                    {level.description}
+                  </p>
+                  <div className="flex flex-wrap gap-3 mt-4">
+                    <span className="inline-flex items-center text-xs font-bold bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg">
+                      <BookOpen className="w-3.5 h-3.5 mr-1.5" />{' '}
+                      {level.lessons?.length || 0} Aulas
+                    </span>
+                    <span className="inline-flex items-center text-xs font-bold bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg">
+                      <Trophy className="w-3.5 h-3.5 mr-1.5" />
+                      {level.lessons?.reduce(
+                        (acc, curr) => acc + (curr.quizzes?.length || 0),
+                        0,
+                      ) || 0}{' '}
+                      Quizzes
+                    </span>
+                  </div>
+                </div>
+                <div className="w-full md:w-auto shrink-0 mt-2 md:mt-0">
+                  <Button3D
+                    variant="super"
+                    fullWidth
+                    onClick={() =>
+                      firstLesson
+                        ? navigate(`/lesson/${firstLesson.id}`)
+                        : toast.error('Nenhuma aula disponível neste nível.')
+                    }
+                  >
+                    INICIAR NÍVEL
+                  </Button3D>
+                </div>
               </div>
-              <div className="w-full md:w-auto shrink-0 mt-2 md:mt-0">
-                <Button3D
-                  variant="super"
-                  fullWidth
-                  onClick={() => navigate('/lesson')}
-                >
-                  INICIAR NÍVEL
-                </Button3D>
-              </div>
-            </div>
-          ))}
+            )
+          })}
           {levels.length === 0 && (
             <div className="text-center p-10 border-2 border-dashed border-silver rounded-xl text-slate-500 font-medium">
               Nenhum nível cadastrado ainda.

@@ -37,7 +37,11 @@ const App = () => (
                 <Route path="/shop" element={<Shop />} />
                 <Route path="/profile" element={<Profile />} />
               </Route>
-              <Route path="/lesson" element={<Lesson />} />
+              <Route
+                path="/lesson"
+                element={<Navigate to="/dashboard" replace />}
+              />
+              <Route path="/lesson/:id" element={<Lesson />} />
             </Route>
 
             <Route path="*" element={<Navigate to="/" replace />} />
