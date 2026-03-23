@@ -12,13 +12,7 @@ export function Header() {
   }
 
   const handleCTA = () => {
-    if (user && profile?.is_premium) {
-      navigate('/learn')
-    } else if (user && !profile?.is_premium) {
-      scrollTo('pricing')
-    } else {
-      navigate('/signup')
-    }
+    navigate('/signup')
   }
 
   return (
@@ -75,7 +69,7 @@ export function Header() {
             onClick={handleCTA}
             className="bg-[#10b981] hover:bg-[#0e9f6e] text-white px-6 py-2.5 rounded-lg font-bold text-sm uppercase tracking-widest border-b-4 border-[#047857] active:translate-y-[4px] active:border-b-0 transition-all duration-300"
           >
-            {user && profile?.is_premium ? 'Acessar Curso' : 'Começar'}
+            Começar
           </button>
         </div>
       </div>

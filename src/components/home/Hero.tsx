@@ -1,20 +1,12 @@
 import { useNavigate } from 'react-router-dom'
 import { Button3D } from '@/components/ui/button-3d'
 import { CheckCircle } from 'lucide-react'
-import { useAuth } from '@/hooks/use-auth'
 
 export function Hero() {
-  const { user, profile } = useAuth()
   const navigate = useNavigate()
 
   const handleCTA = () => {
-    if (user && profile?.is_premium) {
-      navigate('/learn')
-    } else if (user && !profile?.is_premium) {
-      document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })
-    } else {
-      navigate('/signup')
-    }
+    navigate('/signup')
   }
 
   return (
@@ -60,9 +52,7 @@ export function Hero() {
               size="lg"
               className="w-full sm:w-auto text-lg h-16 shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)]"
             >
-              {user && profile?.is_premium
-                ? 'Acessar Suas Aulas'
-                : 'Comece Agora por R$ 297'}
+              Comece Agora por R$ 297
             </Button3D>
           </div>
         </div>
