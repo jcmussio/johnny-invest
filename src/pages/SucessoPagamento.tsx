@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button3D } from '@/components/ui/button-3d'
 import { useAuth } from '@/hooks/use-auth'
@@ -9,6 +9,7 @@ import {
   PlayCircle,
   Trophy,
   ArrowRight,
+  LayoutDashboard,
 } from 'lucide-react'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
@@ -16,6 +17,7 @@ import { ptBR } from 'date-fns/locale'
 export default function SucessoPagamento() {
   const { user, profile } = useAuth()
   const navigate = useNavigate()
+  const [countdown, setCountdown] = useState(3)
 
   useEffect(() => {
     if (user) {
@@ -33,6 +35,15 @@ export default function SucessoPagamento() {
     }
   }, [user])
 
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => setCountdown((c) => c - 1), 1000)
+      return () => clearTimeout(timer)
+    } else {
+      navigate('/dashboard')
+    }
+  }, [countdown, navigate])
+
   const today = format(new Date(), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })
 
   return (
@@ -45,10 +56,10 @@ export default function SucessoPagamento() {
             <CheckCircle className="w-12 h-12 text-[#10b981]" />
           </div>
           <h1 className="text-3xl md:text-4xl font-extrabold text-white mb-2 relative z-10">
-            Pagamento Confirmado!
+            Bem-vindo ao Johnny Invest!
           </h1>
           <p className="text-[#c0c0c0] font-medium text-lg relative z-10">
-            Bem-vindo ao Johnny Invest. Sua jornada começa agora.
+            Pagamento Confirmado. Sua jornada começa agora.
           </p>
         </div>
 
@@ -56,8 +67,9 @@ export default function SucessoPagamento() {
         <div className="p-6 md:p-8 flex flex-col gap-8">
           {/* Purchase Summary */}
           <div className="bg-[#1a2a4a] rounded-xl p-5 border border-[#c0c0c0]/20">
-            <h2 className="text-sm font-bold text-[#c0c0c0] uppercase tracking-widest mb-4">
-              Resumo da Inscrição
+            <h2 className="text-sm font-bold text-[#c0c0c0] uppercase tracking-widest mb-4 flex items-center gap-2">
+              <CheckCircle className="w-4 h-4 text-[#10b981]" />
+              Resumo da Compra
             </h2>
             <div className="flex flex-col gap-3">
               <div className="flex justify-between items-center gap-4">
@@ -67,21 +79,15 @@ export default function SucessoPagamento() {
                 </span>
               </div>
               <div className="flex justify-between items-center gap-4">
-                <span className="text-slate-400">Aluno:</span>
-                <span className="text-white font-bold text-right line-clamp-1">
-                  {profile?.name || user?.email || 'Investidor'}
-                </span>
-              </div>
-              <div className="flex justify-between items-center gap-4">
-                <span className="text-slate-400">Data de Acesso:</span>
+                <span className="text-slate-400">Data:</span>
                 <span className="text-white font-bold capitalize text-right">
                   {today}
                 </span>
               </div>
               <div className="flex justify-between items-center pt-3 border-t border-[#c0c0c0]/20 mt-1">
-                <span className="text-slate-400">Status:</span>
-                <span className="text-[#10b981] font-bold flex items-center gap-1">
-                  <CheckCircle className="w-4 h-4" /> Premium Ativo
+                <span className="text-slate-400">Preço Pago:</span>
+                <span className="text-[#10b981] font-bold text-lg">
+                  R$ 297,00
                 </span>
               </div>
             </div>
@@ -96,15 +102,28 @@ export default function SucessoPagamento() {
             <div className="flex flex-col gap-4">
               <div className="flex items-start gap-4 bg-[#1a2a4a]/50 p-4 rounded-xl border border-[#c0c0c0]/10 hover:border-[#c0c0c0]/30 transition-colors">
                 <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0">
-                  <PlayCircle className="w-5 h-5 text-blue-400" />
+                  <LayoutDashboard className="w-5 h-5 text-blue-400" />
                 </div>
                 <div>
                   <h3 className="text-white font-bold">
-                    1. Acesse sua primeira aula
+                    1. Acesse seu Dashboard
                   </h3>
                   <p className="text-[#c0c0c0] text-sm mt-1">
-                    Vá para o seu Dashboard e comece pelo Nível 1. A fundação
-                    teórica é essencial.
+                    Lá você encontra seu progresso, próximas aulas e nível
+                    atual.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4 bg-[#1a2a4a]/50 p-4 rounded-xl border border-[#c0c0c0]/10 hover:border-[#c0c0c0]/30 transition-colors">
+                <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0">
+                  <PlayCircle className="w-5 h-5 text-[#10b981]" />
+                </div>
+                <div>
+                  <h3 className="text-white font-bold">
+                    2. Assista a Primeira Aula
+                  </h3>
+                  <p className="text-[#c0c0c0] text-sm mt-1">
+                    Comece pelo Nível 1. A fundação teórica é essencial.
                   </p>
                 </div>
               </div>
@@ -114,11 +133,10 @@ export default function SucessoPagamento() {
                 </div>
                 <div>
                   <h3 className="text-white font-bold">
-                    2. Complete as Missões
+                    3. Complete sua primeira Missão
                   </h3>
                   <p className="text-[#c0c0c0] text-sm mt-1">
-                    Aplique o que aprendeu em cenários práticos simulados e
-                    ganhe pontos de XP.
+                    Teste seus conhecimentos em cenários práticos e ganhe XP.
                   </p>
                 </div>
               </div>
@@ -133,10 +151,12 @@ export default function SucessoPagamento() {
               className="w-full sm:w-auto min-w-[250px] text-lg py-6"
               onClick={() => navigate('/dashboard')}
             >
-              ACESSAR CURSO <ArrowRight className="w-6 h-6 ml-2" />
+              ACESSAR DASHBOARD <ArrowRight className="w-6 h-6 ml-2" />
             </Button3D>
-            <p className="text-slate-500 text-sm mt-4 text-center">
-              Você será redirecionado para o seu ambiente de aprendizado seguro.
+            <p className="text-slate-400 text-sm mt-4 text-center font-medium">
+              Redirecionando automaticamente em{' '}
+              <span className="text-white font-bold">{countdown}</span>{' '}
+              segundos...
             </p>
           </div>
         </div>
