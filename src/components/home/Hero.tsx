@@ -1,14 +1,8 @@
-import { useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { Button3D } from '@/components/ui/button-3d'
 import { CheckCircle } from 'lucide-react'
 
 export function Hero() {
-  const navigate = useNavigate()
-
-  const handleCTA = () => {
-    navigate('/signup')
-  }
-
   return (
     <section
       id="hero"
@@ -47,12 +41,12 @@ export function Hero() {
 
           <div className="block w-full sm:w-auto">
             <Button3D
-              onClick={handleCTA}
+              asChild
               variant="success"
               size="lg"
               className="w-full sm:w-auto text-lg h-16 shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)]"
             >
-              Comece Agora por R$ 297
+              <Link to="/signup">Comece Agora por R$ 297</Link>
             </Button3D>
           </div>
         </div>

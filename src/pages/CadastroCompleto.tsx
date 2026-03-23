@@ -14,11 +14,24 @@ export default function CadastroCompleto() {
   const [cpf, setCpf] = useState('')
   const [phone, setPhone] = useState('')
   const [loadingLocal, setLoadingLocal] = useState(false)
+  const [checkingAuth, setCheckingAuth] = useState(true)
 
   useEffect(() => {
-    if (!authLoading && !user) {
-      navigate('/login')
+    let timeout: NodeJS.Timeout
+
+    if (!authLoading) {
+      if (!user) {
+        // Tolerância de 1.5s para evitar redirecionamentos indevidos causados
+        // por atraso na propagação do estado do provedor de autenticação logo após o signup
+        timeout = setTimeout(() => {
+          navigate('/login')
+        }, 1500)
+      } else {
+        setCheckingAuth(false)
+      }
     }
+
+    return () => clearTimeout(timeout)
   }, [user, authLoading, navigate])
 
   const maskCPF = (val: string) => {
@@ -70,7 +83,13 @@ export default function CadastroCompleto() {
     }
   }
 
-  if (authLoading || !user) return null
+  if (authLoading || checkingAuth || !user) {
+    return (
+      <div className="min-h-screen bg-[#1a2a4a] flex items-center justify-center px-4">
+        <div className="w-10 h-10 border-4 border-[#10b981] border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-[#1a2a4a] flex items-center justify-center px-4 py-10 animate-fade-in">

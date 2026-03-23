@@ -1,29 +1,21 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { Logo } from '@/components/ui/logo'
-import { useAuth } from '@/hooks/use-auth'
 
 export function Header() {
-  const { user, profile } = useAuth()
-  const navigate = useNavigate()
-
   const scrollTo = (id: string) => {
     const el = document.getElementById(id)
     if (el) el.scrollIntoView({ behavior: 'smooth' })
   }
 
-  const handleCTA = () => {
-    navigate('/signup')
-  }
-
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-[#1a2a4a]/95 backdrop-blur-sm border-b border-[#c0c0c0]/10">
       <div className="max-w-6xl mx-auto px-4 lg:px-8 h-20 flex items-center justify-between">
-        <div className="flex items-center gap-3">
+        <Link to="/" className="flex items-center gap-3">
           <Logo className="w-[60px] h-[60px] lg:w-[80px] lg:h-[80px]" />
           <span className="text-xl lg:text-2xl font-bold tracking-tight text-white hidden sm:inline-block">
             Johnny Invest
           </span>
-        </div>
+        </Link>
 
         <nav className="hidden md:flex items-center gap-8">
           <button
@@ -53,24 +45,18 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-4">
-          {!user ? (
-            <Link
-              to="/login"
-              className="text-[#c0c0c0] font-bold text-sm hover:text-white transition-colors uppercase tracking-wider hidden sm:block"
-            >
-              Entrar
-            </Link>
-          ) : (
-            <span className="text-[#c0c0c0] font-bold text-sm hidden sm:block">
-              Olá, {profile?.name || user.email?.split('@')[0]}
-            </span>
-          )}
-          <button
-            onClick={handleCTA}
-            className="bg-[#10b981] hover:bg-[#0e9f6e] text-white px-6 py-2.5 rounded-lg font-bold text-sm uppercase tracking-widest border-b-4 border-[#047857] active:translate-y-[4px] active:border-b-0 transition-all duration-300"
+          <Link
+            to="/login"
+            className="text-[#c0c0c0] font-bold text-sm hover:text-white transition-colors uppercase tracking-wider hidden sm:block"
+          >
+            Entrar
+          </Link>
+          <Link
+            to="/signup"
+            className="bg-[#10b981] hover:bg-[#0e9f6e] text-white px-6 py-2.5 rounded-lg font-bold text-sm uppercase tracking-widest border-b-4 border-[#047857] active:translate-y-[4px] active:border-b-0 transition-all duration-300 inline-block text-center"
           >
             Começar
-          </button>
+          </Link>
         </div>
       </div>
     </header>

@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { Button3D } from '@/components/ui/button-3d'
-import { useAuth } from '@/hooks/use-auth'
+import { supabase } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import { Shield } from 'lucide-react'
 
@@ -9,20 +9,27 @@ export default function Signup() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loadingLocal, setLoadingLocal] = useState(false)
-  const { signUp, loading } = useAuth()
   const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoadingLocal(true)
     try {
-      const { error } = await signUp(email, password)
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/cadastro-completo`,
+        },
+      })
+
       if (error) throw error
 
       toast.success('Conta criada com sucesso!', {
         description: 'Redirecionando para o próximo passo...',
       })
 
+      // Delay de 1 segundo estrito conforme solicitado, sem interferência de re-renders de contexto.
       setTimeout(() => {
         navigate('/cadastro-completo')
       }, 1000)
@@ -34,8 +41,6 @@ export default function Signup() {
       })
     }
   }
-
-  if (loading) return null
 
   return (
     <div className="min-h-screen bg-[#1a2a4a] flex items-center justify-center px-4">
@@ -89,25 +94,18 @@ export default function Signup() {
         </form>
 
         <div className="mt-6 text-center">
-          <button
-            type="button"
-            onClick={() => navigate('/login')}
+          <Link
+            to="/login"
             className="text-[#10b981] text-sm font-semibold hover:underline"
-            disabled={loadingLocal}
           >
             Já tem uma conta? Entre aqui
-          </button>
+          </Link>
         </div>
 
         <div className="mt-4 text-center">
-          <button
-            type="button"
-            onClick={() => navigate('/')}
-            className="text-[#c0c0c0] text-xs hover:text-white"
-            disabled={loadingLocal}
-          >
+          <Link to="/" className="text-[#c0c0c0] text-xs hover:text-white">
             Voltar para a página inicial
-          </button>
+          </Link>
         </div>
       </div>
     </div>
