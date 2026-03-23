@@ -33,12 +33,14 @@ const App = () => (
           <Toaster />
           <Sonner />
           <Routes>
+            {/* Rotas Públicas */}
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/cadastro-completo" element={<CadastroCompleto />} />
             <Route path="/resumo-compra" element={<ResumoCompra />} />
 
+            {/* Rotas Protegidas */}
             <Route element={<ProtectedRoute />}>
               <Route path="/sucesso-pagamento" element={<SucessoPagamento />} />
               <Route element={<Layout />}>

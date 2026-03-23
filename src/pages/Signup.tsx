@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button3D } from '@/components/ui/button-3d'
 import { useAuth } from '@/hooks/use-auth'
@@ -9,15 +9,8 @@ export default function Signup() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loadingLocal, setLoadingLocal] = useState(false)
-  const [justSignedUp, setJustSignedUp] = useState(false)
-  const { signUp, user, loading } = useAuth()
+  const { signUp, loading } = useAuth()
   const navigate = useNavigate()
-
-  useEffect(() => {
-    if (!loading && user && !justSignedUp) {
-      navigate('/dashboard')
-    }
-  }, [user, loading, navigate, justSignedUp])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -25,11 +18,9 @@ export default function Signup() {
     try {
       const { error } = await signUp(email, password)
       if (error) throw error
-      setJustSignedUp(true)
+
       toast.success('Conta criada com sucesso!')
-      setTimeout(() => {
-        navigate('/cadastro-completo')
-      }, 2000)
+      navigate('/cadastro-completo')
     } catch (error: any) {
       setLoadingLocal(false)
       toast.error('Erro de autenticação', {

@@ -24,7 +24,9 @@ export default function Login() {
     try {
       const { error } = await signIn(email, password)
       if (error) throw error
+
       toast.success('Login realizado com sucesso!')
+      navigate('/dashboard')
     } catch (error: any) {
       setLoadingLocal(false)
       toast.error('Erro de autenticação', {
