@@ -1,7 +1,11 @@
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { Button3D } from '@/components/ui/button-3d'
+import { useAuth } from '@/hooks/use-auth'
 
 export function SystemPresentation() {
+  const { user, profile } = useAuth()
+  const navigate = useNavigate()
+
   return (
     <section
       id="sobre"
@@ -80,7 +84,17 @@ export function SystemPresentation() {
               </p>
             </div>
 
-            <Link to="/learn" className="inline-block mt-4">
+            <button
+              onClick={() => {
+                if (user && profile?.is_premium) navigate('/learn')
+                else if (user)
+                  document
+                    .getElementById('pricing')
+                    ?.scrollIntoView({ behavior: 'smooth' })
+                else navigate('/login')
+              }}
+              className="inline-block mt-4"
+            >
               <Button3D
                 variant="outline"
                 size="lg"
@@ -88,7 +102,7 @@ export function SystemPresentation() {
               >
                 Ver Como Funciona
               </Button3D>
-            </Link>
+            </button>
           </div>
         </div>
       </div>

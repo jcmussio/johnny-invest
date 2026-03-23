@@ -9,9 +9,11 @@ import Leaderboard from './pages/Leaderboard'
 import Shop from './pages/Shop'
 import Profile from './pages/Profile'
 import NotFound from './pages/NotFound'
+import Login from './pages/Login'
 import Layout from './components/Layout'
 import { AppProvider } from './stores/useAppStore'
 import { AuthProvider } from './hooks/use-auth'
+import { ProtectedRoute } from './components/ProtectedRoute'
 
 const App = () => (
   <BrowserRouter
@@ -24,13 +26,18 @@ const App = () => (
           <Sonner />
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route element={<Layout />}>
-              <Route path="/learn" element={<Learn />} />
-              <Route path="/leaderboard" element={<Leaderboard />} />
-              <Route path="/shop" element={<Shop />} />
-              <Route path="/profile" element={<Profile />} />
+            <Route path="/login" element={<Login />} />
+
+            <Route element={<ProtectedRoute />}>
+              <Route element={<Layout />}>
+                <Route path="/learn" element={<Learn />} />
+                <Route path="/leaderboard" element={<Leaderboard />} />
+                <Route path="/shop" element={<Shop />} />
+                <Route path="/profile" element={<Profile />} />
+              </Route>
+              <Route path="/lesson" element={<Lesson />} />
             </Route>
-            <Route path="/lesson" element={<Lesson />} />
+
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </TooltipProvider>

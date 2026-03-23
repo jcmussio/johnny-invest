@@ -7,10 +7,14 @@ import {
 } from 'react'
 import { User, Session } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase/client'
+import type { Database } from '@/lib/supabase/types'
+
+type UserProfile = Database['public']['Tables']['users']['Row']
 
 interface AuthContextType {
   user: User | null
   session: Session | null
+  profile: UserProfile | null
   signUp: (email: string, password: string) => Promise<{ error: any }>
   signIn: (email: string, password: string) => Promise<{ error: any }>
   signOut: () => Promise<{ error: any }>
@@ -28,22 +32,82 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
+  const [profile, setProfile] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    let mounted = true
+
+    const fetchProfile = async (sessionUser: User) => {
+      try {
+        const { data, error } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', sessionUser.id)
+          .single()
+
+        if (error && error.code === 'PGRST116') {
+          // Row not found, let's create it automatically for robustness
+          const { data: newData, error: insertError } = await supabase
+            .from('users')
+            .insert({
+              id: sessionUser.id,
+              email: sessionUser.email!,
+            })
+            .select('*')
+            .single()
+
+          if (!insertError && mounted) {
+            setProfile(newData)
+            setLoading(false)
+            return
+          }
+        }
+
+        if (mounted) {
+          setProfile(data)
+          setLoading(false)
+        }
+      } catch (err) {
+        if (mounted) {
+          setProfile(null)
+          setLoading(false)
+        }
+      }
+    }
+
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
-      setSession(session)
-      setUser(session?.user ?? null)
-      setLoading(false)
+      if (mounted) {
+        setSession(session)
+        setUser(session?.user ?? null)
+        if (session?.user) {
+          fetchProfile(session.user)
+        } else {
+          setProfile(null)
+          setLoading(false)
+        }
+      }
     })
+
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-      setUser(session?.user ?? null)
-      setLoading(false)
+      if (mounted) {
+        setSession(session)
+        setUser(session?.user ?? null)
+        if (session?.user) {
+          fetchProfile(session.user)
+        } else {
+          setProfile(null)
+          setLoading(false)
+        }
+      }
     })
-    return () => subscription.unsubscribe()
+
+    return () => {
+      mounted = false
+      subscription.unsubscribe()
+    }
   }, [])
 
   const signUp = async (email: string, password: string) => {
@@ -68,7 +132,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, session, signUp, signIn, signOut, loading }}
+      value={{ user, session, profile, signUp, signIn, signOut, loading }}
     >
       {children}
     </AuthContext.Provider>

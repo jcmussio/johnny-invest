@@ -7,13 +7,18 @@ import { createStripeCheckout } from '@/services/stripe'
 import { toast } from 'sonner'
 
 export function Pricing() {
-  const { user } = useAuth()
+  const { user, profile } = useAuth()
   const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(false)
 
   const handleCheckout = async () => {
     if (!user) {
       toast.info('Por favor, crie sua conta primeiro para garantir a vaga.')
+      navigate('/login')
+      return
+    }
+
+    if (profile?.is_premium) {
       navigate('/learn')
       return
     }
@@ -50,7 +55,10 @@ export function Pricing() {
   }
 
   return (
-    <section className="py-24 px-4 lg:px-8 bg-[#22355c] relative overflow-hidden">
+    <section
+      id="pricing"
+      className="py-24 px-4 lg:px-8 bg-[#22355c] relative overflow-hidden"
+    >
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#10b981]/10 via-transparent to-transparent pointer-events-none"></div>
 
       <div className="max-w-4xl mx-auto relative z-10">
@@ -101,9 +109,13 @@ export function Pricing() {
               variant="success"
               className="w-full md:w-auto md:min-w-[400px] h-16 text-lg text-white"
               onClick={handleCheckout}
-              disabled={isLoading}
+              disabled={isLoading || profile?.is_premium}
             >
-              {isLoading ? 'Iniciando Checkout...' : 'Garanta Sua Vaga Agora'}
+              {isLoading
+                ? 'Iniciando Checkout...'
+                : profile?.is_premium
+                  ? 'Você já é um aluno Premium'
+                  : 'Garanta Sua Vaga Agora'}
             </Button3D>
 
             <p className="text-sm text-[#c0c0c0]/60 mt-6 font-medium">

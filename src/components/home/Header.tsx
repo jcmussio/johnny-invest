@@ -1,10 +1,24 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Logo } from '@/components/ui/logo'
+import { useAuth } from '@/hooks/use-auth'
 
 export function Header() {
+  const { user, profile } = useAuth()
+  const navigate = useNavigate()
+
   const scrollTo = (id: string) => {
     const el = document.getElementById(id)
     if (el) el.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  const handleCTA = () => {
+    if (user && profile?.is_premium) {
+      navigate('/learn')
+    } else if (user && !profile?.is_premium) {
+      scrollTo('pricing')
+    } else {
+      navigate('/login')
+    }
   }
 
   return (
@@ -45,18 +59,24 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-4">
-          <Link
-            to="/learn"
-            className="text-[#c0c0c0] font-bold text-sm hover:text-white transition-colors uppercase tracking-wider hidden sm:block"
-          >
-            Entrar
-          </Link>
-          <Link
-            to="/learn"
+          {!user ? (
+            <Link
+              to="/login"
+              className="text-[#c0c0c0] font-bold text-sm hover:text-white transition-colors uppercase tracking-wider hidden sm:block"
+            >
+              Entrar
+            </Link>
+          ) : (
+            <span className="text-[#c0c0c0] font-bold text-sm hidden sm:block">
+              Olá, {profile?.name || user.email?.split('@')[0]}
+            </span>
+          )}
+          <button
+            onClick={handleCTA}
             className="bg-[#10b981] hover:bg-[#0e9f6e] text-white px-6 py-2.5 rounded-lg font-bold text-sm uppercase tracking-widest border-b-4 border-[#047857] active:translate-y-[4px] active:border-b-0 transition-all duration-300"
           >
-            Começar
-          </Link>
+            {user && profile?.is_premium ? 'Acessar Curso' : 'Começar'}
+          </button>
         </div>
       </div>
     </header>
