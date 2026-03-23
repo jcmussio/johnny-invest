@@ -121,9 +121,18 @@ export default function AulaPremium() {
               .eq('nome', aula.badge_nome)
               .single()
             if (b) {
-              await supabase
+              const { data: existingBadge } = await supabase
                 .from('user_badges')
-                .insert({ user_id: user.id, badge_id: b.id })
+                .select('id')
+                .eq('user_id', user.id)
+                .eq('badge_id', b.id)
+                .maybeSingle()
+
+              if (!existingBadge) {
+                await supabase
+                  .from('user_badges')
+                  .insert({ user_id: user.id, badge_id: b.id })
+              }
             }
           }
           setProg({

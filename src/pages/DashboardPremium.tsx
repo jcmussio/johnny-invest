@@ -11,6 +11,7 @@ import {
   Crown,
   Flame,
   Trophy,
+  Lock,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -84,7 +85,32 @@ export default function DashboardPremium() {
         : 0,
   }
 
-  const aulasPorNivel = aulas.reduce((acc: any, aula: any) => {
+  const aulasOrdenadas = [...aulas].sort((a, b) => {
+    if (a.nivel !== b.nivel) return (a.nivel || 0) - (b.nivel || 0)
+    return (a.numero_aula || 0) - (b.numero_aula || 0)
+  })
+
+  let previousCompleted = true
+  const processedAulas = aulasOrdenadas.map((aula) => {
+    const prog = progress[aula.id] || {}
+    const isCompleted = prog.completada || false
+    const isUnlocked = previousCompleted
+
+    if (!isCompleted) {
+      previousCompleted = false
+    }
+
+    return {
+      ...aula,
+      prog,
+      isCompleted,
+      isUnlocked,
+      hasQuiz: (prog.quiz_score || 0) >= 70,
+      hasMissao: prog.missao_completada || false,
+    }
+  })
+
+  const aulasPorNivel = processedAulas.reduce((acc: any, aula: any) => {
     const nivel = aula.nivel || 1
     if (!acc[nivel]) acc[nivel] = []
     acc[nivel].push(aula)
@@ -172,20 +198,24 @@ export default function DashboardPremium() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {aulasPorNivel[nivel].map((aula: any) => {
-                const prog = progress[aula.id] || {}
-                const isCompleted = prog.completada || false
-                const hasQuiz = (prog.quiz_score || 0) >= 70
-                const hasMissao = prog.missao_completada || false
+                const { isCompleted, isUnlocked, hasQuiz, hasMissao } = aula
 
                 return (
                   <div
                     key={aula.id}
-                    onClick={() => navigate(`/aula/${aula.id}`)}
+                    onClick={() =>
+                      isUnlocked ? navigate(`/aula/${aula.id}`) : null
+                    }
                     className={cn(
-                      'bg-white border-2 rounded-xl p-5 flex flex-col gap-4 transition-all cursor-pointer shadow-sm group',
+                      'bg-white border-2 rounded-xl p-5 flex flex-col gap-4 transition-all shadow-sm group',
+                      isUnlocked
+                        ? 'cursor-pointer hover:border-purple-400 hover:shadow-md'
+                        : 'opacity-60 grayscale cursor-not-allowed border-slate-200',
                       isCompleted
                         ? 'border-emerald bg-emerald-50/20'
-                        : 'border-silver hover:border-purple-400 hover:shadow-md',
+                        : isUnlocked
+                          ? 'border-silver'
+                          : '',
                     )}
                   >
                     <div>
@@ -195,6 +225,9 @@ export default function DashboardPremium() {
                         </span>
                         {isCompleted && (
                           <CheckCircle className="w-5 h-5 text-emerald" />
+                        )}
+                        {!isUnlocked && (
+                          <Lock className="w-4 h-4 text-slate-400" />
                         )}
                       </div>
                       <h3 className="font-bold text-navy text-lg leading-tight line-clamp-2">
@@ -255,12 +288,18 @@ export default function DashboardPremium() {
                       <div
                         className={cn(
                           'flex items-center justify-center rounded-lg flex-1 text-center font-bold text-xs transition-colors',
-                          !isCompleted
-                            ? 'bg-purple-100 text-purple-700 group-hover:bg-purple-600 group-hover:text-white'
-                            : 'bg-emerald-100 text-emerald-700',
+                          !isUnlocked
+                            ? 'bg-slate-100 text-slate-400'
+                            : !isCompleted
+                              ? 'bg-purple-100 text-purple-700 group-hover:bg-purple-600 group-hover:text-white'
+                              : 'bg-emerald-100 text-emerald-700',
                         )}
                       >
-                        {isCompleted ? 'REVISAR' : 'ACESSAR'}
+                        {!isUnlocked
+                          ? 'BLOQUEADA'
+                          : isCompleted
+                            ? 'REVISAR'
+                            : 'ACESSAR'}
                       </div>
                     </div>
                   </div>

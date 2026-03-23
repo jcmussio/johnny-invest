@@ -157,7 +157,7 @@ export default function MissaoPremium() {
 
           {feedback === 'correct' && (
             <div className="text-emerald-600 font-bold text-center mt-2 flex items-center justify-center gap-2">
-              <CheckCircle className="w-5 h-5" /> Excelente! Você acertou.
+              <CheckCircle className="w-5 h-5" /> Missão Completa!
             </div>
           )}
           {feedback === 'incorrect' && (
