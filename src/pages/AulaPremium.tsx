@@ -5,6 +5,7 @@ import { useAuth } from '@/hooks/use-auth'
 import { Button3D } from '@/components/ui/button-3d'
 import { Progress } from '@/components/ui/progress'
 import { BadgeAnimation } from '@/components/BadgeAnimation'
+import { useToast } from '@/components/ui/use-toast'
 import {
   ArrowLeft,
   BrainCircuit,
@@ -23,6 +24,7 @@ import { cn } from '@/lib/utils'
 export default function AulaPremium() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { toast } = useToast()
   const { user, loading: authLoading } = useAuth()
   const [aula, setAula] = useState<any>(null)
   const [prog, setProg] = useState<any>(null)
@@ -123,9 +125,21 @@ export default function AulaPremium() {
               xp_ganho: newXpGanho,
             }))
 
+            toast({
+              title: 'Parabéns!',
+              description: data.message || 'Aula concluída com sucesso.',
+            })
+
             if (data.badge_nome) {
               setShowBadge(data.badge_nome)
             }
+          } else {
+            toast({
+              title: 'Aviso',
+              description:
+                data?.message || 'Ocorreu um erro ao atualizar o progresso.',
+              variant: 'destructive',
+            })
           }
         } catch (e) {
           console.error('Error completing aula via Edge Function', e)
@@ -135,7 +149,14 @@ export default function AulaPremium() {
       }
       completeAula()
     }
-  }, [prog?.quiz_score, prog?.missao_completada, prog?.completada, id, user])
+  }, [
+    prog?.quiz_score,
+    prog?.missao_completada,
+    prog?.completada,
+    id,
+    user,
+    toast,
+  ])
 
   if (loading || authLoading)
     return (
