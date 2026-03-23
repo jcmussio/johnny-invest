@@ -14,6 +14,7 @@ import NotFound from './pages/NotFound'
 import Login from './pages/Login'
 import Success from './pages/Success'
 import CadastroCompleto from './pages/CadastroCompleto'
+import ResumoCompra from './pages/ResumoCompra'
 import Layout from './components/Layout'
 import Missions from './pages/Missions'
 import Badges from './pages/Badges'
@@ -34,10 +35,11 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Login />} />
-            <Route path="/success" element={<Success />} />
             <Route path="/cadastro-completo" element={<CadastroCompleto />} />
+            <Route path="/resumo-compra" element={<ResumoCompra />} />
 
             <Route element={<ProtectedRoute />}>
+              <Route path="/success" element={<Success />} />
               <Route element={<Layout />}>
                 <Route path="/learn" element={<Learn />} />
                 <Route path="/dashboard" element={<Dashboard />} />
