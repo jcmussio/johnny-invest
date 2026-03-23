@@ -12,6 +12,7 @@ import Shop from './pages/Shop'
 import Profile from './pages/Profile'
 import NotFound from './pages/NotFound'
 import Login from './pages/Login'
+import Success from './pages/Success'
 import Layout from './components/Layout'
 import Missions from './pages/Missions'
 import { AppProvider } from './stores/useAppStore'
@@ -30,6 +31,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/success" element={<Success />} />
 
             <Route element={<ProtectedRoute />}>
               <Route element={<Layout />}>
