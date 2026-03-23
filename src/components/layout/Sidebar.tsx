@@ -1,10 +1,16 @@
 import { Link, useLocation } from 'react-router-dom'
 import { cn } from '@/lib/utils'
-import { BookOpen, Trophy, Store, User } from 'lucide-react'
+import { BookOpen, Trophy, Store, User, Target } from 'lucide-react'
 import { Logo } from '@/components/ui/logo'
 
 const navItems = [
   { label: 'APRENDER', icon: BookOpen, path: '/learn', color: 'text-navy' },
+  {
+    label: 'MISSÕES',
+    icon: Target,
+    path: '/missions',
+    color: 'text-orange-500',
+  },
   {
     label: 'RANKING',
     icon: Trophy,

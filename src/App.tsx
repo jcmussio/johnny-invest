@@ -13,6 +13,7 @@ import Profile from './pages/Profile'
 import NotFound from './pages/NotFound'
 import Login from './pages/Login'
 import Layout from './components/Layout'
+import Missions from './pages/Missions'
 import { AppProvider } from './stores/useAppStore'
 import { AuthProvider } from './hooks/use-auth'
 import { ProtectedRoute } from './components/ProtectedRoute'
@@ -34,6 +35,7 @@ const App = () => (
               <Route element={<Layout />}>
                 <Route path="/learn" element={<Learn />} />
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/missions" element={<Missions />} />
                 <Route path="/leaderboard" element={<Leaderboard />} />
                 <Route path="/shop" element={<Shop />} />
                 <Route path="/profile" element={<Profile />} />
