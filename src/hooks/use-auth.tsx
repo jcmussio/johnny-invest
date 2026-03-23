@@ -53,9 +53,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           .single()
 
         if (error && error.code === 'PGRST116') {
+          // Usuário recém-criado: garante que seu registro exista na tabela public.users
           const { data: newData, error: insertError } = await supabase
             .from('users')
-            .insert({
+            .upsert({
               id: sessionUser.id,
               email: sessionUser.email!,
             })
@@ -66,7 +67,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setProfile(newData)
           }
         } else if (mounted && data) {
-          // Streak Logic
+          // Lógica de Streak (Sequência de dias)
           const todayDate = new Date()
           const todayStr = new Date(
             todayDate.getTime() - todayDate.getTimezoneOffset() * 60000,
@@ -156,32 +157,40 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [])
 
   const signUp = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/dashboard/premium`,
-      },
-    })
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/dashboard/premium`,
+        },
+      })
 
-    // Check if the user already exists (Supabase returns a fake user with empty identities for security reasons)
-    if (
-      data?.user &&
-      data.user.identities &&
-      data.user.identities.length === 0
-    ) {
-      return { data: null, error: new Error('user_already_exists') }
+      // Supabase retorna um usuário fake sem identidades se o email já estiver em uso
+      if (
+        data?.user &&
+        data.user.identities &&
+        data.user.identities.length === 0
+      ) {
+        return { data: null, error: new Error('user_already_exists') }
+      }
+
+      return { data, error }
+    } catch (err: any) {
+      return { data: null, error: err }
     }
-
-    return { data, error }
   }
 
   const signIn = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
-    return { data, error }
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+      return { data, error }
+    } catch (err: any) {
+      return { data: null, error: err }
+    }
   }
 
   const signOut = async () => {

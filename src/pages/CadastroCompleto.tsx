@@ -4,7 +4,7 @@ import { Button3D } from '@/components/ui/button-3d'
 import { useAuth } from '@/hooks/use-auth'
 import { supabase } from '@/lib/supabase/client'
 import { toast } from 'sonner'
-import { UserCircle } from 'lucide-react'
+import { UserCircle, Loader2 } from 'lucide-react'
 
 export default function CadastroCompleto() {
   const { user, loading: authLoading } = useAuth()
@@ -62,10 +62,15 @@ export default function CadastroCompleto() {
 
     setLoadingLocal(true)
     try {
-      const { error } = await supabase
-        .from('users')
-        .update({ name, cpf, telefone: phone })
-        .eq('id', user.id)
+      // Utilizamos upsert para garantir a criação do registro, caso a política
+      // do RLS de inserção primária tenha atrasado por alguma razão de rede.
+      const { error } = await supabase.from('users').upsert({
+        id: user.id,
+        email: user.email!,
+        name,
+        cpf,
+        telefone: phone,
+      })
 
       if (error) throw error
 
@@ -84,7 +89,7 @@ export default function CadastroCompleto() {
   if (authLoading || checkingAuth || !user) {
     return (
       <div className="min-h-screen bg-[#1a2a4a] flex items-center justify-center px-4">
-        <div className="w-10 h-10 border-4 border-[#10b981] border-t-transparent rounded-full animate-spin"></div>
+        <Loader2 className="w-12 h-12 animate-spin text-[#10b981]" />
       </div>
     )
   }
@@ -165,8 +170,13 @@ export default function CadastroCompleto() {
             variant="success"
             className="w-full mt-6 h-14 text-[15px]"
             disabled={loadingLocal}
+            type="submit"
           >
-            {loadingLocal ? 'PROCESSANDO...' : 'ACESSAR PLATAFORMA'}
+            {loadingLocal ? (
+              <Loader2 className="w-5 h-5 animate-spin mx-auto" />
+            ) : (
+              'ACESSAR PLATAFORMA'
+            )}
           </Button3D>
         </form>
       </div>

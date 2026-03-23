@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { Button3D } from '@/components/ui/button-3d'
 import { useAuth } from '@/hooks/use-auth'
 import { toast } from 'sonner'
-import { Shield } from 'lucide-react'
+import { Shield, Loader2 } from 'lucide-react'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -20,6 +20,12 @@ export default function Login() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (!email || !password) {
+      toast.error('Preencha todos os campos')
+      return
+    }
+
     setLoadingLocal(true)
     try {
       const { error } = await signIn(email, password)
@@ -27,11 +33,15 @@ export default function Login() {
       if (error) {
         if (
           error.message === 'Invalid login credentials' ||
-          error.message?.includes('invalid_credentials')
+          error.message?.includes('invalid_credentials') ||
+          error.code === 'invalid_credentials'
         ) {
           throw new Error(
             'Email ou senha incorretos. Verifique suas credenciais e tente novamente.',
           )
+        }
+        if (error.message?.includes('Email not confirmed')) {
+          throw new Error('Por favor, confirme seu email antes de fazer login.')
         }
         throw error
       }
@@ -39,15 +49,22 @@ export default function Login() {
       toast.success('Login realizado com sucesso!')
       navigate('/dashboard/premium')
     } catch (error: any) {
-      setLoadingLocal(false)
       toast.error('Erro de autenticação', {
         description:
           error.message || 'Verifique suas credenciais e tente novamente.',
       })
+    } finally {
+      setLoadingLocal(false)
     }
   }
 
-  if (loading) return null
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#1a2a4a] flex items-center justify-center">
+        <Loader2 className="w-12 h-12 animate-spin text-[#10b981]" />
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-[#1a2a4a] flex items-center justify-center px-4">
@@ -73,6 +90,8 @@ export default function Login() {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full bg-[#1a2a4a] border border-[#c0c0c0]/30 rounded-lg px-4 h-12 text-white focus:outline-none focus:border-[#10b981] transition-colors"
               required
+              disabled={loadingLocal}
+              autoComplete="email"
             />
           </div>
           <div>
@@ -86,6 +105,8 @@ export default function Login() {
               className="w-full bg-[#1a2a4a] border border-[#c0c0c0]/30 rounded-lg px-4 h-12 text-white focus:outline-none focus:border-[#10b981] transition-colors"
               required
               minLength={6}
+              disabled={loadingLocal}
+              autoComplete="current-password"
             />
           </div>
 
@@ -93,29 +114,29 @@ export default function Login() {
             variant="success"
             className="w-full mt-4"
             disabled={loadingLocal}
+            type="submit"
           >
-            {loadingLocal ? 'Processando...' : 'Entrar'}
+            {loadingLocal ? (
+              <Loader2 className="w-5 h-5 animate-spin mx-auto" />
+            ) : (
+              'Entrar'
+            )}
           </Button3D>
         </form>
 
         <div className="mt-6 text-center">
-          <button
-            type="button"
-            onClick={() => navigate('/signup')}
+          <Link
+            to="/signup"
             className="text-[#10b981] text-sm font-semibold hover:underline"
           >
             Não tem uma conta? Cadastre-se
-          </button>
+          </Link>
         </div>
 
         <div className="mt-4 text-center">
-          <button
-            type="button"
-            onClick={() => navigate('/')}
-            className="text-[#c0c0c0] text-xs hover:text-white"
-          >
+          <Link to="/" className="text-[#c0c0c0] text-xs hover:text-white">
             Voltar para a página inicial
-          </button>
+          </Link>
         </div>
       </div>
     </div>
