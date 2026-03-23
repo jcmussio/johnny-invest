@@ -4,12 +4,22 @@ import { Button3D } from '@/components/ui/button-3d'
 import { createStripeCheckout } from '@/services/stripe'
 import { toast } from 'sonner'
 import { CheckCircle2, ShoppingCart, CreditCard, Loader2 } from 'lucide-react'
+import { useAuth } from '@/hooks/use-auth'
 
 export default function Pricing() {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
+  const { user } = useAuth()
 
   const handleCheckout = async () => {
+    if (!user) {
+      toast.error('Autenticação necessária', {
+        description: 'Você precisa estar logado para iniciar o pagamento.',
+      })
+      navigate('/login')
+      return
+    }
+
     setLoading(true)
     try {
       const priceId = import.meta.env.VITE_STRIPE_PRICE_ID || 'price_dummy'
@@ -20,17 +30,20 @@ export default function Pricing() {
         `${window.location.origin}/pricing`,
       )
 
-      if (error) throw error
+      if (error) {
+        throw error
+      }
 
       if (data?.url) {
         window.location.href = data.url
       } else {
-        throw new Error('URL de checkout não retornada')
+        throw new Error('URL de checkout não retornada pela função.')
       }
     } catch (error: any) {
-      console.error('Erro no checkout:', error)
+      console.error('Erro detalhado no checkout:', error)
       toast.error('Erro ao iniciar pagamento', {
-        description: 'Tente novamente mais tarde.',
+        // Agora exibiremos o erro exato retornado pelo Stripe ou pela Edge Function
+        description: error.message || 'Tente novamente mais tarde.',
       })
     } finally {
       setLoading(false)
