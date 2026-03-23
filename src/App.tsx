@@ -12,7 +12,8 @@ import Shop from './pages/Shop'
 import Profile from './pages/Profile'
 import NotFound from './pages/NotFound'
 import Login from './pages/Login'
-import Success from './pages/Success'
+import Signup from './pages/Signup'
+import SucessoPagamento from './pages/SucessoPagamento'
 import CadastroCompleto from './pages/CadastroCompleto'
 import ResumoCompra from './pages/ResumoCompra'
 import Layout from './components/Layout'
@@ -34,12 +35,12 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
             <Route path="/cadastro-completo" element={<CadastroCompleto />} />
             <Route path="/resumo-compra" element={<ResumoCompra />} />
 
             <Route element={<ProtectedRoute />}>
-              <Route path="/success" element={<Success />} />
+              <Route path="/sucesso-pagamento" element={<SucessoPagamento />} />
               <Route element={<Layout />}>
                 <Route path="/learn" element={<Learn />} />
                 <Route path="/dashboard" element={<Dashboard />} />

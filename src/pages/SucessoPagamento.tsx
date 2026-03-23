@@ -13,19 +13,22 @@ import {
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
-export default function Success() {
+export default function SucessoPagamento() {
   const { user, profile } = useAuth()
   const navigate = useNavigate()
 
   useEffect(() => {
     if (user) {
-      // Registra a data de acesso
+      // Registra a data de acesso e atualiza para premium
       supabase
         .from('users')
-        .update({ updated_at: new Date().toISOString() })
+        .update({
+          updated_at: new Date().toISOString(),
+          is_premium: true,
+        })
         .eq('id', user.id)
         .then(({ error }) => {
-          if (error) console.error('Erro ao registrar acesso:', error)
+          if (error) console.error('Erro ao atualizar perfil premium:', error)
         })
     }
   }, [user])
@@ -42,10 +45,10 @@ export default function Success() {
             <CheckCircle className="w-12 h-12 text-[#10b981]" />
           </div>
           <h1 className="text-3xl md:text-4xl font-extrabold text-white mb-2 relative z-10">
-            Bem-vindo ao Johnny Invest!
+            Pagamento Confirmado!
           </h1>
           <p className="text-[#c0c0c0] font-medium text-lg relative z-10">
-            Sua jornada para dominar o mercado financeiro começa agora.
+            Bem-vindo ao Johnny Invest. Sua jornada começa agora.
           </p>
         </div>
 
@@ -78,7 +81,7 @@ export default function Success() {
               <div className="flex justify-between items-center pt-3 border-t border-[#c0c0c0]/20 mt-1">
                 <span className="text-slate-400">Status:</span>
                 <span className="text-[#10b981] font-bold flex items-center gap-1">
-                  <CheckCircle className="w-4 h-4" /> Ativo
+                  <CheckCircle className="w-4 h-4" /> Premium Ativo
                 </span>
               </div>
             </div>

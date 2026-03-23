@@ -5,26 +5,31 @@ import { useAuth } from '@/hooks/use-auth'
 import { toast } from 'sonner'
 import { Shield } from 'lucide-react'
 
-export default function Login() {
+export default function Signup() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loadingLocal, setLoadingLocal] = useState(false)
-  const { signIn, user, loading } = useAuth()
+  const [justSignedUp, setJustSignedUp] = useState(false)
+  const { signUp, user, loading } = useAuth()
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (!loading && user) {
+    if (!loading && user && !justSignedUp) {
       navigate('/dashboard')
     }
-  }, [user, loading, navigate])
+  }, [user, loading, navigate, justSignedUp])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoadingLocal(true)
     try {
-      const { error } = await signIn(email, password)
+      const { error } = await signUp(email, password)
       if (error) throw error
-      toast.success('Login realizado com sucesso!')
+      setJustSignedUp(true)
+      toast.success('Conta criada com sucesso!')
+      setTimeout(() => {
+        navigate('/cadastro-completo')
+      }, 2000)
     } catch (error: any) {
       setLoadingLocal(false)
       toast.error('Erro de autenticação', {
@@ -42,10 +47,10 @@ export default function Login() {
         <div className="flex flex-col items-center mb-8">
           <Shield className="w-16 h-16 text-[#10b981] mb-4" />
           <h1 className="text-2xl font-bold text-white text-center">
-            Bem-vindo de volta
+            Crie sua conta
           </h1>
           <p className="text-[#c0c0c0] text-sm mt-2 text-center">
-            Acesse sua conta para continuar aprendendo.
+            Cadastre-se para garantir sua vaga no Johnny Invest.
           </p>
         </div>
 
@@ -81,17 +86,17 @@ export default function Login() {
             className="w-full mt-4"
             disabled={loadingLocal}
           >
-            {loadingLocal ? 'Processando...' : 'Entrar'}
+            {loadingLocal ? 'Processando...' : 'Criar Conta'}
           </Button3D>
         </form>
 
         <div className="mt-6 text-center">
           <button
             type="button"
-            onClick={() => navigate('/signup')}
+            onClick={() => navigate('/login')}
             className="text-[#10b981] text-sm font-semibold hover:underline"
           >
-            Não tem uma conta? Cadastre-se
+            Já tem uma conta? Entre aqui
           </button>
         </div>
 

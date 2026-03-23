@@ -23,7 +23,7 @@ export default function ResumoCompra() {
 
       const { data, error } = await createStripeCheckout(
         priceId,
-        `${window.location.origin}/success`,
+        `${window.location.origin}/sucesso-pagamento`,
         `${window.location.origin}/resumo-compra`,
       )
 
