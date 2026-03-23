@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://plataforma-duolingo-clone-9e72f.goskip.app/sitemap.xml

@@ -1,8 +1,9 @@
-/* 404 Page - Displays when a user attempts to access a non-existent route - translate to the language of the user */
-import { useLocation } from 'react-router-dom'
+import { useLocation, Link } from 'react-router-dom'
 import { useEffect } from 'react'
+import { Button3D } from '@/components/ui/button-3d'
+import { ShieldAlert } from 'lucide-react'
 
-const NotFound = () => {
+export default function NotFound() {
   const location = useLocation()
 
   useEffect(() => {
@@ -13,16 +14,16 @@ const NotFound = () => {
   }, [location.pathname])
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">404</h1>
-        <p className="text-xl text-gray-600 mb-4">Oops! Page not found</p>
-        <a href="/" className="text-blue-500 hover:text-blue-700 underline">
-          Return to Home
-        </a>
-      </div>
+    <div className="min-h-screen bg-[#1a2a4a] flex flex-col items-center justify-center p-4 text-center">
+      <ShieldAlert className="w-24 h-24 text-[#ef4444] mb-6 animate-pulse" />
+      <h1 className="text-5xl font-extrabold text-white mb-4">404</h1>
+      <p className="text-xl text-[#c0c0c0] mb-8 max-w-md">
+        Página não encontrada. Parece que você navegou para fora da trilha do
+        investidor.
+      </p>
+      <Button3D variant="success" size="lg" asChild>
+        <Link to="/dashboard/premium">Voltar para Dashboard</Link>
+      </Button3D>
     </div>
   )
 }
-
-export default NotFound

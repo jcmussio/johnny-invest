@@ -30,6 +30,7 @@ export function SystemPresentation() {
               src="https://img.usecurling.com/p/800/800?q=trading%20charts&color=blue&dpr=2"
               alt="Metodologia"
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80"
+              loading="lazy"
             />
             <div className="absolute bottom-0 left-0 p-8 z-20">
               <div className="bg-[#10b981] text-white text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full inline-block mb-3">

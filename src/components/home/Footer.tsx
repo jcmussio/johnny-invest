@@ -1,4 +1,5 @@
 import { Logo } from '@/components/ui/logo'
+import { Link } from 'react-router-dom'
 
 export function Footer() {
   const scrollTo = (id: string) => {
@@ -20,16 +21,54 @@ export function Footer() {
             A primeira plataforma gamificada do Brasil focada exclusivamente em
             opções e derivativos.
           </p>
-          <div className="flex gap-4">
+        </div>
+
+        <div>
+          <h4 className="text-white font-bold mb-4 uppercase tracking-widest text-sm">
+            Navegação
+          </h4>
+          <ul className="space-y-3 text-sm text-[#c0c0c0]">
+            <li>
+              <Link
+                to="/dashboard/premium"
+                className="hover:text-white transition-colors"
+              >
+                Dashboard
+              </Link>
+            </li>
+            <li>
+              <button
+                onClick={() => scrollTo('sobre')}
+                className="hover:text-white transition-colors"
+              >
+                Sobre
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => scrollTo('faq')}
+                className="hover:text-white transition-colors"
+              >
+                FAQ / Contato
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 className="text-white font-bold mb-4 uppercase tracking-widest text-sm">
+            Redes Sociais
+          </h4>
+          <div className="flex gap-4 mt-2">
             {['Twitter', 'LinkedIn', 'Instagram'].map((social) => (
               <a
                 key={social}
                 href="#"
-                className="w-8 h-8 rounded-full bg-[#1a2a4a] flex items-center justify-center text-[#c0c0c0] hover:bg-[#10b981] hover:text-white transition-colors"
+                className="w-10 h-10 rounded-full bg-[#1a2a4a] flex items-center justify-center text-[#c0c0c0] hover:bg-[#10b981] hover:text-white transition-colors"
+                aria-label={social}
               >
-                <span className="sr-only">{social}</span>
                 <div
-                  className="w-4 h-4 bg-current"
+                  className="w-5 h-5 bg-current"
                   style={{
                     maskImage:
                       'url(https://img.usecurling.com/i?q=' +
@@ -41,64 +80,6 @@ export function Footer() {
               </a>
             ))}
           </div>
-        </div>
-
-        <div>
-          <h4 className="text-white font-bold mb-4 uppercase tracking-widest text-sm">
-            Plataforma
-          </h4>
-          <ul className="space-y-3 text-sm text-[#c0c0c0]">
-            <li>
-              <button
-                onClick={() => scrollTo('hero')}
-                className="hover:text-white transition-colors"
-              >
-                Home
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => scrollTo('sobre')}
-                className="hover:text-white transition-colors"
-              >
-                Metodologia
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => scrollTo('blog')}
-                className="hover:text-white transition-colors"
-              >
-                Blog
-              </button>
-            </li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 className="text-white font-bold mb-4 uppercase tracking-widest text-sm">
-            Suporte
-          </h4>
-          <ul className="space-y-3 text-sm text-[#c0c0c0]">
-            <li>
-              <button
-                onClick={() => scrollTo('faq')}
-                className="hover:text-white transition-colors"
-              >
-                FAQ
-              </button>
-            </li>
-            <li>
-              <a href="#" className="hover:text-white transition-colors">
-                Contato
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:text-white transition-colors">
-                Central de Ajuda
-              </a>
-            </li>
-          </ul>
         </div>
 
         <div>

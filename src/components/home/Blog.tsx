@@ -50,6 +50,7 @@ export function Blog() {
                 src={post.img}
                 alt={post.title}
                 className="w-full h-48 object-cover opacity-80"
+                loading="lazy"
               />
               <div className="p-6">
                 <span className="text-xs text-[#10b981] font-bold tracking-wider uppercase mb-2 block">
