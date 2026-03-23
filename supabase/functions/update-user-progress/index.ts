@@ -1,11 +1,11 @@
-import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
-import { corsHeaders } from '../_shared/cors.ts'
-import { createClient } from 'npm:@supabase/supabase-js'
+import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
+import { corsHeaders } from '../_shared/cors.ts';
+import { createClient } from 'npm:@supabase/supabase-js';
 
 Deno.serve(async (req: Request) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response('ok', { headers: corsHeaders });
   }
 
   try {
@@ -17,24 +17,19 @@ Deno.serve(async (req: Request) => {
         global: {
           headers: { Authorization: req.headers.get('Authorization')! },
         },
-      },
-    )
+      }
+    );
 
-    const { user_id, aula_id, quiz_score, missao_completa } = await req.json()
+    const { user_id, aula_id, quiz_score, missao_completa } = await req.json();
 
-    console.log(
-      `[update-user-progress] User: ${user_id}, Aula: ${aula_id}, Score: ${quiz_score}, Missao: ${missao_completa}`,
-    )
+    console.log(`[update-user-progress] User: ${user_id}, Aula: ${aula_id}, Score: ${quiz_score}, Missao: ${missao_completa}`);
 
     // (2) Validate minimum requirements
     if (quiz_score < 70 || !missao_completa) {
-      return new Response(
-        JSON.stringify({ status: 'erro', message: 'Erro na atualização' }),
-        {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 400,
-        },
-      )
+      return new Response(JSON.stringify({ status: 'erro', message: 'Erro na atualização' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 400
+      });
     }
 
     // Fetch Aula details to know the badge name and order
@@ -42,10 +37,10 @@ Deno.serve(async (req: Request) => {
       .from('aulas')
       .select('*')
       .eq('id', aula_id)
-      .single()
+      .single();
 
     if (aulaError || !aula) {
-      throw new Error('Aula não encontrada')
+      throw new Error('Aula não encontrada');
     }
 
     // Fetch current user progress for this lesson
@@ -54,28 +49,21 @@ Deno.serve(async (req: Request) => {
       .select('id, xp_ganho, completada')
       .eq('user_id', user_id)
       .eq('aula_id', aula_id)
-      .single()
+      .single();
 
     if (progFetchError || !prog) {
-      throw new Error('Progresso não encontrado')
+       throw new Error('Progresso não encontrado');
     }
 
     // Idempotency: If already complete, return success immediately
     if (prog.completada) {
-      return new Response(
-        JSON.stringify({
-          status: 'sucesso',
-          message: 'Aula completa!',
-          badge_nome: null,
-        }),
-        {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 200,
-        },
-      )
+       return new Response(JSON.stringify({ status: 'sucesso', message: 'Aula completa!', badge_nome: null }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200
+      });
     }
 
-    const newXpGanho = (prog.xp_ganho || 0) + 100
+    const newXpGanho = (prog.xp_ganho || 0) + 100;
 
     // (3) Update user_progress marking it as complete
     await supabaseClient
@@ -83,28 +71,28 @@ Deno.serve(async (req: Request) => {
       .update({
         completada: true,
         badge_conquistada: !!aula.badge_nome,
-        xp_ganho: newXpGanho,
+        xp_ganho: newXpGanho
       })
-      .eq('id', prog.id)
+      .eq('id', prog.id);
 
     // (4) Grant Badge if applicable
-    let badgeConquistada = false
+    let badgeConquistada = false;
     if (aula.badge_nome) {
       const { data: badge } = await supabaseClient
         .from('badges')
         .select('id')
         .eq('nome', aula.badge_nome)
-        .single()
+        .single();
 
       if (badge) {
-        // Insert into user_badges. The unique constraint handles duplicates gracefully
-        const { error: badgeError } = await supabaseClient
-          .from('user_badges')
-          .insert({ user_id, badge_id: badge.id })
-
-        if (!badgeError) {
-          badgeConquistada = true
-        }
+         // Insert into user_badges. The unique constraint handles duplicates gracefully
+         const { error: badgeError } = await supabaseClient
+           .from('user_badges')
+           .insert({ user_id, badge_id: badge.id });
+         
+         if (!badgeError) {
+            badgeConquistada = true;
+         }
       }
     }
 
@@ -113,13 +101,13 @@ Deno.serve(async (req: Request) => {
       .from('users')
       .select('xp')
       .eq('id', user_id)
-      .single()
+      .single();
 
     if (user) {
       await supabaseClient
         .from('users')
         .update({ xp: (user.xp || 0) + 100 })
-        .eq('id', user_id)
+        .eq('id', user_id);
     }
 
     // Unlock the next lesson
@@ -127,51 +115,46 @@ Deno.serve(async (req: Request) => {
       .from('aulas')
       .select('id, nivel, numero_aula')
       .order('nivel', { ascending: true })
-      .order('numero_aula', { ascending: true })
+      .order('numero_aula', { ascending: true });
 
-    let nextAulaId = null
+    let nextAulaId = null;
     if (allAulas) {
-      const currentIndex = allAulas.findIndex((a: any) => a.id === aula_id)
+      const currentIndex = allAulas.findIndex((a: any) => a.id === aula_id);
       if (currentIndex !== -1 && currentIndex < allAulas.length - 1) {
-        nextAulaId = allAulas[currentIndex + 1].id
-
+        nextAulaId = allAulas[currentIndex + 1].id;
+        
         const { data: existingNextProg } = await supabaseClient
           .from('user_progress')
           .select('id')
           .eq('user_id', user_id)
           .eq('aula_id', nextAulaId)
-          .maybeSingle()
+          .maybeSingle();
 
         if (!existingNextProg) {
           await supabaseClient
             .from('user_progress')
-            .insert({ user_id, aula_id: nextAulaId })
+            .insert({ user_id, aula_id: nextAulaId });
         }
       }
     }
 
     // (6) Retornar JSON de Sucesso
-    return new Response(
-      JSON.stringify({
-        status: 'sucesso',
-        message: 'Aula completa!',
-        badge_nome: badgeConquistada ? aula.badge_nome : null,
-        next_aula_id: nextAulaId,
-      }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200,
-      },
-    )
+    return new Response(JSON.stringify({ 
+      status: 'sucesso', 
+      message: 'Aula completa!',
+      badge_nome: badgeConquistada ? aula.badge_nome : null,
+      next_aula_id: nextAulaId
+    }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 200
+    });
+
   } catch (error: any) {
-    console.error('[update-user-progress] Error:', error)
+    console.error('[update-user-progress] Error:', error);
     // (6) Retornar JSON de Erro
-    return new Response(
-      JSON.stringify({ status: 'erro', message: 'Erro na atualização' }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500,
-      },
-    )
+    return new Response(JSON.stringify({ status: 'erro', message: 'Erro na atualização' }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 500
+    });
   }
-})
+});
