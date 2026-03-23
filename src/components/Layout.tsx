@@ -9,8 +9,11 @@ export default function Layout() {
   const isMobile = useIsMobile()
   const location = useLocation()
 
-  // Lesson page handles its own layout
-  if (location.pathname.startsWith('/lesson')) {
+  // Lesson and Quiz pages handle their own full-screen layouts
+  if (
+    location.pathname.startsWith('/lesson') ||
+    location.pathname.startsWith('/quiz')
+  ) {
     return <Outlet />
   }
 

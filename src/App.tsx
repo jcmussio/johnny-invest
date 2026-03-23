@@ -6,6 +6,7 @@ import Index from './pages/Index'
 import Learn from './pages/Learn'
 import Dashboard from './pages/Dashboard'
 import Lesson from './pages/Lesson'
+import Quiz from './pages/Quiz'
 import Leaderboard from './pages/Leaderboard'
 import Shop from './pages/Shop'
 import Profile from './pages/Profile'
@@ -42,6 +43,7 @@ const App = () => (
                 element={<Navigate to="/dashboard" replace />}
               />
               <Route path="/lesson/:id" element={<Lesson />} />
+              <Route path="/quiz/:lessonId" element={<Quiz />} />
             </Route>
 
             <Route path="*" element={<Navigate to="/" replace />} />

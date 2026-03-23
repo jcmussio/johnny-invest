@@ -11,6 +11,7 @@ import {
   Loader2,
   X,
   BookOpen,
+  BrainCircuit,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
@@ -35,10 +36,10 @@ export default function Lesson() {
     const fetchLessonData = async () => {
       setLoading(true)
       try {
-        // Fetch current lesson
+        // Fetch current lesson including quizzes relation to check if it has quizzes
         const { data: lessonData, error: lessonError } = await supabase
           .from('lessons')
-          .select('*, level:levels(*)')
+          .select('*, level:levels(*), quizzes(id)')
           .eq('id', id)
           .single()
 
@@ -90,6 +91,7 @@ export default function Lesson() {
     currentIndex < allLessons.length - 1 ? allLessons[currentIndex + 1] : null
 
   const isCompleted = completedLessons.has(id || '')
+  const hasQuizzes = lesson?.quizzes && lesson.quizzes.length > 0
 
   const progressPercent =
     allLessons.length > 0
@@ -97,10 +99,18 @@ export default function Lesson() {
       : 0
 
   const handleComplete = async () => {
-    if (!user || !id || isCompleted) return
+    if (!user || !id || isCompleted) {
+      if (isCompleted) {
+        if (hasQuizzes) navigate(`/quiz/${id}`)
+        else if (nextLesson) navigate(`/lesson/${nextLesson.id}`)
+        else navigate('/dashboard')
+      }
+      return
+    }
+
     setCompleting(true)
     try {
-      // Check if progress already exists to avoid unique constraint error
+      // Check if progress already exists
       const { data: existingProgress } = await supabase
         .from('user_progress')
         .select('id')
@@ -139,9 +149,13 @@ export default function Lesson() {
       setCompletedLessons((prev) => new Set(prev).add(id))
       toast.success('Aula concluída!', { description: 'Você ganhou +50 XP!' })
 
-      // Auto advance to next if available
-      if (nextLesson) {
+      // Auto advance: Go to quiz if available, otherwise next lesson or dashboard
+      if (hasQuizzes) {
+        setTimeout(() => navigate(`/quiz/${id}`), 1500)
+      } else if (nextLesson) {
         setTimeout(() => navigate(`/lesson/${nextLesson.id}`), 1500)
+      } else {
+        setTimeout(() => navigate('/dashboard'), 1500)
       }
     } catch (error: any) {
       toast.error('Erro ao concluir aula', { description: error.message })
@@ -226,22 +240,33 @@ export default function Lesson() {
           </Button3D>
 
           <Button3D
-            variant={isCompleted ? 'secondary' : 'super'}
+            variant={
+              isCompleted ? (hasQuizzes ? 'super' : 'secondary') : 'super'
+            }
             size="lg"
             className={cn(
               'w-full sm:w-auto min-w-[200px]',
-              isCompleted && 'bg-slate-100 text-emerald border-slate-200',
+              isCompleted &&
+                !hasQuizzes &&
+                'bg-slate-100 text-emerald border-slate-200',
             )}
             onClick={handleComplete}
-            disabled={completing || isCompleted}
+            disabled={completing}
           >
             {completing ? (
               <Loader2 className="w-5 h-5 animate-spin" />
             ) : isCompleted ? (
-              <>
-                <CheckCircle className="w-5 h-5 mr-2" />
-                CONCLUÍDA
-              </>
+              hasQuizzes ? (
+                <>
+                  <BrainCircuit className="w-5 h-5 mr-2" />
+                  IR PARA O QUIZ
+                </>
+              ) : (
+                <>
+                  <CheckCircle className="w-5 h-5 mr-2" />
+                  CONCLUÍDA
+                </>
+              )
             ) : (
               'CONCLUIR AULA'
             )}
