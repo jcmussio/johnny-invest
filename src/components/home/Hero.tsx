@@ -53,8 +53,9 @@ export function Hero() {
             </div>
           </div>
 
-          <button onClick={handleCTA} className="block w-full sm:w-auto">
+          <div className="block w-full sm:w-auto">
             <Button3D
+              onClick={handleCTA}
               variant="success"
               size="lg"
               className="w-full sm:w-auto text-lg h-16 shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)]"
@@ -63,7 +64,7 @@ export function Hero() {
                 ? 'Acessar Suas Aulas'
                 : 'Comece Agora por R$ 297'}
             </Button3D>
-          </button>
+          </div>
         </div>
 
         <div className="relative mx-auto w-full max-w-md lg:max-w-none perspective-1000">

@@ -84,25 +84,23 @@ export function SystemPresentation() {
               </p>
             </div>
 
-            <button
-              onClick={() => {
-                if (user && profile?.is_premium) navigate('/learn')
-                else if (user)
-                  document
-                    .getElementById('pricing')
-                    ?.scrollIntoView({ behavior: 'smooth' })
-                else navigate('/login')
-              }}
-              className="inline-block mt-4"
-            >
+            <div className="inline-block mt-4">
               <Button3D
+                onClick={() => {
+                  if (user && profile?.is_premium) navigate('/learn')
+                  else if (user)
+                    document
+                      .getElementById('pricing')
+                      ?.scrollIntoView({ behavior: 'smooth' })
+                  else navigate('/login')
+                }}
                 variant="outline"
                 size="lg"
                 className="border-[#c0c0c0] text-[#c0c0c0]"
               >
                 Ver Como Funciona
               </Button3D>
-            </button>
+            </div>
           </div>
         </div>
       </div>
