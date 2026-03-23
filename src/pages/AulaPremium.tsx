@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/use-auth'
@@ -29,6 +29,8 @@ export default function AulaPremium() {
   const [nextAulaId, setNextAulaId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [showBadge, setShowBadge] = useState<string | null>(null)
+
+  const completingRef = useRef(false)
 
   useEffect(() => {
     if (!id) return
@@ -82,74 +84,58 @@ export default function AulaPremium() {
     }
   }, [id, user, authLoading])
 
-  // Auto-complete lesson logic
+  // Auto-complete lesson logic via Edge Function
   useEffect(() => {
     if (
       user &&
       prog &&
       prog.quiz_score >= 70 &&
       prog.missao_completada &&
-      !prog.completada
+      !prog.completada &&
+      !completingRef.current
     ) {
       const completeAula = async () => {
+        completingRef.current = true
         try {
-          const newXpGanho = (prog.xp_ganho || 0) + 100
-          await supabase
-            .from('user_progress')
-            .update({
+          console.log('Calling Edge Function: update-user-progress')
+          const { data, error } = await supabase.functions.invoke(
+            'update-user-progress',
+            {
+              body: {
+                user_id: user.id,
+                aula_id: id,
+                quiz_score: prog.quiz_score,
+                missao_completa: prog.missao_completada,
+              },
+            },
+          )
+
+          console.log('Edge Function Response:', data, error)
+
+          if (error) throw error
+
+          if (data?.status === 'sucesso') {
+            const newXpGanho = (prog.xp_ganho || 0) + 100
+            setProg((prev: any) => ({
+              ...prev,
               completada: true,
-              badge_conquistada: true,
+              badge_conquistada: !!data.badge_nome,
               xp_ganho: newXpGanho,
-            })
-            .eq('id', prog.id)
+            }))
 
-          const { data: u } = await supabase
-            .from('users')
-            .select('xp')
-            .eq('id', user.id)
-            .single()
-          if (u) {
-            await supabase
-              .from('users')
-              .update({ xp: (u.xp || 0) + 100 })
-              .eq('id', user.id)
-          }
-
-          if (aula?.badge_nome) {
-            const { data: b } = await supabase
-              .from('badges')
-              .select('id')
-              .eq('nome', aula.badge_nome)
-              .single()
-            if (b) {
-              const { data: existingBadge } = await supabase
-                .from('user_badges')
-                .select('id')
-                .eq('user_id', user.id)
-                .eq('badge_id', b.id)
-                .maybeSingle()
-
-              if (!existingBadge) {
-                await supabase
-                  .from('user_badges')
-                  .insert({ user_id: user.id, badge_id: b.id })
-              }
+            if (data.badge_nome) {
+              setShowBadge(data.badge_nome)
             }
           }
-          setProg({
-            ...prog,
-            completada: true,
-            badge_conquistada: true,
-            xp_ganho: newXpGanho,
-          })
-          if (aula?.badge_nome) setShowBadge(aula.badge_nome)
         } catch (e) {
-          console.error('Error completing aula', e)
+          console.error('Error completing aula via Edge Function', e)
+        } finally {
+          completingRef.current = false
         }
       }
       completeAula()
     }
-  }, [prog, aula, user])
+  }, [prog?.quiz_score, prog?.missao_completada, prog?.completada, id, user])
 
   if (loading || authLoading)
     return (
