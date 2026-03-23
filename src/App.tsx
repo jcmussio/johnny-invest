@@ -5,6 +5,7 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import Index from './pages/Index'
 import Learn from './pages/Learn'
 import Dashboard from './pages/Dashboard'
+import DashboardPremium from './pages/DashboardPremium'
 import Lesson from './pages/Lesson'
 import Quiz from './pages/Quiz'
 import Leaderboard from './pages/Leaderboard'
@@ -48,6 +49,10 @@ const App = () => (
               <Route element={<Layout />}>
                 <Route path="/learn" element={<Learn />} />
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route
+                  path="/dashboard/premium"
+                  element={<DashboardPremium />}
+                />
                 <Route path="/missions" element={<Missions />} />
                 <Route path="/badges" element={<Badges />} />
                 <Route path="/leaderboard" element={<Leaderboard />} />

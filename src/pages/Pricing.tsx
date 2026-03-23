@@ -3,7 +3,13 @@ import { useNavigate } from 'react-router-dom'
 import { Button3D } from '@/components/ui/button-3d'
 import { createStripeCheckout } from '@/services/stripe'
 import { toast } from 'sonner'
-import { CheckCircle2, ShoppingCart, CreditCard, Loader2 } from 'lucide-react'
+import {
+  CheckCircle2,
+  ShoppingCart,
+  CreditCard,
+  Loader2,
+  Rocket,
+} from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
 import { supabase } from '@/lib/supabase/client'
 
@@ -13,7 +19,6 @@ export default function Pricing() {
   const { user } = useAuth()
 
   const handleCheckout = async () => {
-    // 1. & 2. Garantir que o usuário está autenticado e capturar a sessão mais atualizada
     const { data: sessionData } = await supabase.auth.getSession()
     const currentUser = sessionData.session?.user || user
 
@@ -32,41 +37,57 @@ export default function Pricing() {
     try {
       const priceId = import.meta.env.VITE_STRIPE_PRICE_ID || 'price_dummy'
 
-      // Log dos parâmetros enviados para debug
-      console.log('1/2. Iniciando checkout com os parâmetros:', {
+      console.log('Iniciando checkout com os parâmetros:', {
         user_id: currentUser.id,
         email: currentUser.email,
         price_id: priceId,
       })
 
-      // Chamada à Edge Function stripe-checkout
       const { data, error } = await createStripeCheckout(
         priceId,
         `${window.location.origin}/sucesso-pagamento`,
         `${window.location.origin}/pricing`,
       )
 
-      if (error) {
-        console.error('Erro capturado no createStripeCheckout:', error)
-        throw error
-      }
+      if (error) throw error
 
-      console.log('Resposta de sucesso do checkout Stripe:', data)
-
-      // 3. Redirecionamento automático
       if (data?.url) {
-        console.log('3. Redirecionando usuário para Stripe URL:', data.url)
         window.location.href = data.url
       } else {
-        console.error('URL não encontrada na resposta da Edge Function:', data)
         throw new Error('URL de checkout não retornada pela função.')
       }
     } catch (error: any) {
-      // 4. Exibir erro no console para debug
-      console.error('4. Erro detalhado no fluxo de checkout:', error)
+      console.error('Erro detalhado no fluxo de checkout:', error)
       toast.error('Erro ao iniciar pagamento', {
         description: error.message || 'Tente novamente mais tarde.',
       })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleAtivarPremium = async () => {
+    const { data: sessionData } = await supabase.auth.getSession()
+    const currentUser = sessionData.session?.user || user
+
+    if (!currentUser) {
+      toast.error('Autenticação necessária')
+      return navigate('/login')
+    }
+
+    setLoading(true)
+    try {
+      const { error } = await supabase
+        .from('users')
+        .update({ premium: true })
+        .eq('id', currentUser.id)
+
+      if (error) throw error
+
+      toast.success('Premium ativado com sucesso!')
+      navigate('/dashboard/premium')
+    } catch (e: any) {
+      toast.error('Erro ao ativar Premium', { description: e.message })
     } finally {
       setLoading(false)
     }
@@ -131,6 +152,22 @@ export default function Pricing() {
                 <>
                   <CreditCard className="w-5 h-5 mr-2" />
                   Continuar com Pagamento
+                </>
+              )}
+            </Button3D>
+
+            <Button3D
+              variant="super"
+              className="w-full h-14 text-[15px] bg-purple-600 border-purple-800 hover:bg-purple-700"
+              onClick={handleAtivarPremium}
+              disabled={loading}
+            >
+              {loading ? (
+                <Loader2 className="w-6 h-6 animate-spin" />
+              ) : (
+                <>
+                  <Rocket className="w-5 h-5 mr-2" />
+                  Ativar Premium (Acesso Fase 1)
                 </>
               )}
             </Button3D>
