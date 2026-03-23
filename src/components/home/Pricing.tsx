@@ -1,8 +1,54 @@
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button3D } from '@/components/ui/button-3d'
 import { Check } from 'lucide-react'
+import { useAuth } from '@/hooks/use-auth'
+import { createStripeCheckout } from '@/services/stripe'
+import { toast } from 'sonner'
 
 export function Pricing() {
+  const { user } = useAuth()
+  const navigate = useNavigate()
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleCheckout = async () => {
+    if (!user) {
+      toast.info('Por favor, crie sua conta primeiro para garantir a vaga.')
+      navigate('/learn')
+      return
+    }
+
+    try {
+      setIsLoading(true)
+      const priceId = import.meta.env.VITE_STRIPE_PRICE_ID || 'price_1Qx_dummy'
+      const successUrl = `${window.location.origin}/learn?success=true`
+      const cancelUrl = `${window.location.origin}/?canceled=true`
+
+      const { data, error } = await createStripeCheckout(
+        priceId,
+        successUrl,
+        cancelUrl,
+      )
+
+      if (error) {
+        throw new Error(error.message || 'Erro ao conectar com o Stripe')
+      }
+
+      if (data?.url) {
+        window.location.href = data.url
+      } else {
+        throw new Error('URL de checkout não retornada')
+      }
+    } catch (err: any) {
+      console.error('Checkout error:', err)
+      toast.error('Erro ao iniciar o pagamento', {
+        description: err.message || 'Tente novamente mais tarde.',
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return (
     <section className="py-24 px-4 lg:px-8 bg-[#22355c] relative overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#10b981]/10 via-transparent to-transparent pointer-events-none"></div>
@@ -51,14 +97,14 @@ export function Pricing() {
               ))}
             </div>
 
-            <Link to="/learn">
-              <Button3D
-                variant="success"
-                className="w-full md:w-auto md:min-w-[400px] h-16 text-lg text-white"
-              >
-                Garanta Sua Vaga Agora
-              </Button3D>
-            </Link>
+            <Button3D
+              variant="success"
+              className="w-full md:w-auto md:min-w-[400px] h-16 text-lg text-white"
+              onClick={handleCheckout}
+              disabled={isLoading}
+            >
+              {isLoading ? 'Iniciando Checkout...' : 'Garanta Sua Vaga Agora'}
+            </Button3D>
 
             <p className="text-sm text-[#c0c0c0]/60 mt-6 font-medium">
               Pagamento 100% seguro. Acesso imediato após aprovação.
