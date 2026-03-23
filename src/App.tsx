@@ -41,14 +41,18 @@ const App = () => (
             <Route path="/cadastro-completo" element={<CadastroCompleto />} />
             <Route path="/welcome" element={<Welcome />} />
 
+            {/* Rotas de Aprendizado Liberadas (Sem Autenticação Obrigatória) */}
+            <Route element={<Layout />}>
+              <Route path="/dashboard/premium" element={<DashboardPremium />} />
+            </Route>
+            <Route path="/aula/:id" element={<AulaPremium />} />
+            <Route path="/quiz/:id" element={<QuizPremium />} />
+            <Route path="/missao/:id" element={<MissaoPremium />} />
+
             <Route element={<ProtectedRoute />}>
               <Route element={<Layout />}>
                 <Route path="/learn" element={<Learn />} />
                 <Route path="/dashboard" element={<Dashboard />} />
-                <Route
-                  path="/dashboard/premium"
-                  element={<DashboardPremium />}
-                />
                 <Route path="/missions" element={<Missions />} />
                 <Route path="/badges" element={<Badges />} />
                 <Route path="/leaderboard" element={<Leaderboard />} />
@@ -61,10 +65,6 @@ const App = () => (
                 element={<Navigate to="/dashboard" replace />}
               />
               <Route path="/lesson/:id" element={<Lesson />} />
-
-              <Route path="/aula/:id" element={<AulaPremium />} />
-              <Route path="/quiz/:id" element={<QuizPremium />} />
-              <Route path="/missao/:id" element={<MissaoPremium />} />
             </Route>
 
             <Route path="*" element={<Navigate to="/" replace />} />

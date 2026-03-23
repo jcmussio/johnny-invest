@@ -38,57 +38,57 @@ export default function MissaoPremium() {
   }, [id])
 
   const submitAnswer = async () => {
-    if (!answer.trim() || !user || !missao) return
+    if (!answer.trim() || !missao) return
     setSubmitting(true)
 
     const isCorrect =
       answer.trim().toLowerCase() === missao.resposta_correta.toLowerCase()
 
     if (isCorrect) {
-      try {
-        const { data: existing } = await supabase
-          .from('user_progress')
-          .select('*')
-          .eq('user_id', user.id)
-          .eq('aula_id', id)
-          .single()
-
-        if (!existing || !existing.missao_completada) {
-          const reward = missao.xp_reward || 150
-          const { data: u } = await supabase
-            .from('users')
-            .select('xp')
-            .eq('id', user.id)
+      if (user) {
+        try {
+          const { data: existing } = await supabase
+            .from('user_progress')
+            .select('*')
+            .eq('user_id', user.id)
+            .eq('aula_id', id)
             .single()
-          if (u)
-            await supabase
-              .from('users')
-              .update({ xp: (u.xp || 0) + reward })
-              .eq('id', user.id)
 
-          if (existing) {
-            await supabase
-              .from('user_progress')
-              .update({
-                missao_completada: true,
-                xp_ganho: (existing.xp_ganho || 0) + reward,
-              })
-              .eq('id', existing.id)
-          } else {
-            await supabase
-              .from('user_progress')
-              .insert({
+          if (!existing || !existing.missao_completada) {
+            const reward = missao.xp_reward || 150
+            const { data: u } = await supabase
+              .from('users')
+              .select('xp')
+              .eq('id', user.id)
+              .single()
+            if (u)
+              await supabase
+                .from('users')
+                .update({ xp: (u.xp || 0) + reward })
+                .eq('id', user.id)
+
+            if (existing) {
+              await supabase
+                .from('user_progress')
+                .update({
+                  missao_completada: true,
+                  xp_ganho: (existing.xp_ganho || 0) + reward,
+                })
+                .eq('id', existing.id)
+            } else {
+              await supabase.from('user_progress').insert({
                 user_id: user.id,
                 aula_id: id,
                 missao_completada: true,
                 xp_ganho: reward,
               })
+            }
           }
+        } catch (e) {
+          console.error(e)
         }
-        setFeedback('correct')
-      } catch (e) {
-        console.error(e)
       }
+      setFeedback('correct')
     } else {
       setFeedback('incorrect')
     }

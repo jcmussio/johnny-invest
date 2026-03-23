@@ -17,14 +17,14 @@ import { cn } from '@/lib/utils'
 export default function AulaPremium() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { user } = useAuth()
+  const { user, loading: authLoading } = useAuth()
   const [aula, setAula] = useState<any>(null)
   const [prog, setProg] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [showBadge, setShowBadge] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!user || !id) return
+    if (!id) return
     const fetchAula = async () => {
       try {
         const { data: aulaData } = await supabase
@@ -34,24 +34,32 @@ export default function AulaPremium() {
           .single()
         setAula(aulaData)
 
-        const { data: progData } = await supabase
-          .from('user_progress')
-          .select('*')
-          .eq('user_id', user.id)
-          .eq('aula_id', id)
-          .single()
-        setProg(progData || {})
+        if (user) {
+          const { data: progData } = await supabase
+            .from('user_progress')
+            .select('*')
+            .eq('user_id', user.id)
+            .eq('aula_id', id)
+            .single()
+          setProg(progData || {})
+        } else {
+          setProg({})
+        }
       } catch (err) {
         console.error(err)
       } finally {
         setLoading(false)
       }
     }
-    fetchAula()
-  }, [id, user])
+
+    if (!authLoading) {
+      fetchAula()
+    }
+  }, [id, user, authLoading])
 
   useEffect(() => {
     if (
+      user &&
       prog &&
       prog.quiz_score >= 70 &&
       prog.missao_completada &&
@@ -72,13 +80,13 @@ export default function AulaPremium() {
           const { data: u } = await supabase
             .from('users')
             .select('xp')
-            .eq('id', user!.id)
+            .eq('id', user.id)
             .single()
           if (u) {
             await supabase
               .from('users')
               .update({ xp: (u.xp || 0) + 100 })
-              .eq('id', user!.id)
+              .eq('id', user.id)
           }
 
           if (aula?.badge_nome) {
@@ -90,7 +98,7 @@ export default function AulaPremium() {
             if (b) {
               await supabase
                 .from('user_badges')
-                .insert({ user_id: user!.id, badge_id: b.id })
+                .insert({ user_id: user.id, badge_id: b.id })
             }
           }
           setProg({
@@ -108,7 +116,7 @@ export default function AulaPremium() {
     }
   }, [prog, aula, user])
 
-  if (loading)
+  if (loading || authLoading)
     return (
       <div className="flex h-screen items-center justify-center bg-slate-50">
         <Loader2 className="w-12 h-12 animate-spin text-purple-600" />

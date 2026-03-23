@@ -48,11 +48,10 @@ export default function QuizPremium() {
   }, [id])
 
   const finishQuiz = async (finalCorrects: number) => {
-    if (!user) return
     const finalScore = Math.round((finalCorrects / perguntas.length) * 100)
     setScore(finalScore)
 
-    if (finalScore >= 70) {
+    if (finalScore >= 70 && user) {
       try {
         const { data: existing } = await supabase
           .from('user_progress')
@@ -86,14 +85,12 @@ export default function QuizPremium() {
             })
             .eq('id', existing.id)
         } else {
-          await supabase
-            .from('user_progress')
-            .insert({
-              user_id: user.id,
-              aula_id: id,
-              quiz_score: finalScore,
-              xp_ganho: 50,
-            })
+          await supabase.from('user_progress').insert({
+            user_id: user.id,
+            aula_id: id,
+            quiz_score: finalScore,
+            xp_ganho: 50,
+          })
         }
       } catch (e) {
         console.error(e)
@@ -147,7 +144,7 @@ export default function QuizPremium() {
             {score}%
           </span>
         </p>
-        {passed && xpGanho > 0 && (
+        {passed && xpGanho > 0 && user && (
           <p className="text-emerald-600 font-bold text-lg mb-8 bg-emerald-100 px-6 py-2 rounded-full border border-emerald-200">
             +{xpGanho} XP Ganhos!
           </p>

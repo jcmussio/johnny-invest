@@ -25,11 +25,6 @@ export default function DashboardPremium() {
     if (loading) return
 
     const loadDashboardData = async () => {
-      if (!user) {
-        navigate('/login')
-        return
-      }
-
       setIsLoading(true)
       try {
         const { data: aulasData, error: aulasError } = await supabase
@@ -41,18 +36,22 @@ export default function DashboardPremium() {
         if (aulasError) throw aulasError
         setAulas(aulasData || [])
 
-        const { data: progressData, error: progressError } = await supabase
-          .from('user_progress')
-          .select('*')
-          .eq('user_id', user.id)
-          .not('aula_id', 'is', null)
+        if (user) {
+          const { data: progressData, error: progressError } = await supabase
+            .from('user_progress')
+            .select('*')
+            .eq('user_id', user.id)
+            .not('aula_id', 'is', null)
 
-        if (!progressError && progressData) {
-          const progMap: any = {}
-          progressData.forEach((p: any) => {
-            progMap[p.aula_id] = p
-          })
-          setProgress(progMap)
+          if (!progressError && progressData) {
+            const progMap: any = {}
+            progressData.forEach((p: any) => {
+              progMap[p.aula_id] = p
+            })
+            setProgress(progMap)
+          }
+        } else {
+          setProgress({})
         }
       } catch (err: any) {
         console.error('Erro ao carregar Dashboard Premium:', err)
@@ -62,9 +61,9 @@ export default function DashboardPremium() {
     }
 
     loadDashboardData()
-  }, [user, loading, navigate])
+  }, [user, loading])
 
-  if (loading || isLoading) {
+  if (isLoading) {
     return (
       <div className="flex h-[60vh] items-center justify-center">
         <Loader2 className="w-10 h-10 animate-spin text-purple-600" />
