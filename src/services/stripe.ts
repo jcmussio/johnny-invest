@@ -8,19 +8,31 @@ export const createStripeCheckout = async (
   try {
     const { data: sessionData } = await supabase.auth.getSession()
     const token = sessionData.session?.access_token
+    const user = sessionData.session?.user
 
-    // Utilizamos fetch nativo em vez de supabase.functions.invoke
-    // para podermos capturar e extrair a mensagem de erro exata (JSON)
-    // em caso de falha (status 400), o que o invoke mascara com um erro genérico.
+    if (!user) {
+      throw new Error('Usuário não autenticado.')
+    }
+
+    const payload = {
+      price_id: priceId,
+      user_id: user.id,
+      email: user.email,
+      successUrl,
+      cancelUrl,
+    }
+
+    // Utilizamos fetch nativo para enviar os dados explícitos e extrair erros
     const response = await fetch(
       `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/stripe-checkout`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          // O envio do token é opcional, pois a Edge Function foca nos dados do body
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-        body: JSON.stringify({ priceId, successUrl, cancelUrl }),
+        body: JSON.stringify(payload),
       },
     )
 

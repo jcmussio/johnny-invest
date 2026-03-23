@@ -9,28 +9,18 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const { priceId, successUrl, cancelUrl } = await req.json()
-    
-    if (!priceId) {
-      throw new Error('priceId is required')
+    const { price_id, priceId, user_id, email, successUrl, cancelUrl } =
+      await req.json()
+
+    // Suporte tanto para price_id quanto para priceId
+    const targetPriceId = price_id || priceId
+
+    if (!targetPriceId) {
+      throw new Error('price_id is required')
     }
 
-    const authHeader = req.headers.get('Authorization')
-    if (!authHeader) {
-      throw new Error('Missing Authorization header')
-    }
-
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? ''
-
-    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: authHeader } }
-    })
-    
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
-    if (authError || !user) {
-      throw new Error('Not authenticated')
+    if (!user_id || !email) {
+      throw new Error('user_id and email are required in the request body')
     }
 
     const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY')
@@ -42,42 +32,54 @@ Deno.serve(async (req: Request) => {
       apiVersion: '2023-10-16',
       httpClient: Stripe.createFetchHttpClient(),
     })
-    
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
         {
-          price: priceId,
+          price: targetPriceId,
           quantity: 1,
         },
       ],
       mode: 'subscription',
-      success_url: successUrl || `${req.headers.get('origin') ?? 'http://localhost:5173'}/success`,
-      cancel_url: cancelUrl || `${req.headers.get('origin') ?? 'http://localhost:5173'}/cancel`,
-      client_reference_id: user.id,
-      customer_email: user.email,
+      success_url:
+        successUrl ||
+        `${req.headers.get('origin') ?? 'http://localhost:5173'}/success`,
+      cancel_url:
+        cancelUrl ||
+        `${req.headers.get('origin') ?? 'http://localhost:5173'}/cancel`,
+      client_reference_id: user_id,
+      customer_email: email,
     })
 
-    const supabaseServiceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey)
-    
-    await supabaseAdmin
-      .from('orders')
-      .insert({
-        user_id: user.id,
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
+    const supabaseServiceRoleKey =
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+
+    if (supabaseUrl && supabaseServiceRoleKey) {
+      const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey)
+
+      await supabaseAdmin.from('orders').insert({
+        user_id: user_id,
         stripe_session_id: session.id,
-        status: 'pending'
+        status: 'pending',
       })
+    }
 
     return new Response(
       JSON.stringify({ sessionId: session.id, url: session.url }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
     )
   } catch (error) {
     console.error('Checkout error:', error)
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
-      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      JSON.stringify({
+        error: error instanceof Error ? error.message : 'Unknown error',
+      }),
+      {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      },
     )
   }
 })
