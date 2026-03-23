@@ -14,15 +14,15 @@ BEGIN
     -- Garantir que a tabela esteja limpa de seeds antigos caso existam conflitos de numeração (opcional, mas seguro)
     -- Mas como pedimos idempotência com ON CONFLICT DO NOTHING, vamos apenas inserir.
     
-    INSERT INTO public.levels (id, "number", title, description) VALUES
-    (l1_id, 1, 'Fundamentos do Mercado', 'Aprenda o básico de opções e derivativos.'),
-    (l2_id, 2, 'Risco e Retorno', 'Como calcular e gerenciar seus riscos nas operações.'),
-    (l3_id, 3, 'Gregas Básicas', 'Entenda Delta e Gamma na prática.'),
-    (l4_id, 4, 'Gregas Avançadas', 'Domine Theta, Vega e Rho para otimizar ganhos.'),
-    (l5_id, 5, 'Estratégias de Proteção', 'Hedge financeiro e como proteger sua carteira.'),
-    (l6_id, 6, 'Geração de Renda', 'Venda coberta e estratégias de taxa fixa.'),
-    (l7_id, 7, 'Operações Estruturadas', 'Travas de alta/baixa, Borboletas e Condors.'),
-    (l8_id, 8, 'Psicologia do Investidor', 'Controle emocional, gestão de banca e consistência.')
+    INSERT INTO public.levels (id, "number", level_number, title, description) VALUES
+    (l1_id, 1, 1, 'Fundamentos do Mercado', 'Aprenda o básico de opções e derivativos.'),
+    (l2_id, 2, 2, 'Risco e Retorno', 'Como calcular e gerenciar seus riscos nas operações.'),
+    (l3_id, 3, 3, 'Gregas Básicas', 'Entenda Delta e Gamma na prática.'),
+    (l4_id, 4, 4, 'Gregas Avançadas', 'Domine Theta, Vega e Rho para otimizar ganhos.'),
+    (l5_id, 5, 5, 'Estratégias de Proteção', 'Hedge financeiro e como proteger sua carteira.'),
+    (l6_id, 6, 6, 'Geração de Renda', 'Venda coberta e estratégias de taxa fixa.'),
+    (l7_id, 7, 7, 'Operações Estruturadas', 'Travas de alta/baixa, Borboletas e Condors.'),
+    (l8_id, 8, 8, 'Psicologia do Investidor', 'Controle emocional, gestão de banca e consistência.')
     ON CONFLICT DO NOTHING;
 
     -- Inserir algumas aulas no Nível 1 para demonstração
