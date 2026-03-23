@@ -19,10 +19,10 @@ BEGIN
       VALUES (
         v_aula.id, 
         'Quiz: ' || v_aula.titulo, 
-        $$[
+        '[
           {"pergunta": "Qual é o principal conceito ensinado na aula?", "opcoes": ["Opção Correta", "Opção Errada 1", "Opção Errada 2", "Opção Errada 3"], "correta": 0},
           {"pergunta": "Como você pode aplicar essa estratégia no mercado?", "opcoes": ["Sendo imprudente", "Gerenciando risco", "Não operando", "Ignorando a teoria"], "correta": 1}
-        ]$$::jsonb,
+        ]'::jsonb,
         'Questão placeholder',
         'A'
       );
