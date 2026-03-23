@@ -16,6 +16,7 @@ import {
   Trophy,
   Rocket,
   ChevronRight,
+  BookOpen,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -217,6 +218,80 @@ export default function AulaPremium() {
     )
   }
 
+  const renderMarkdown = (text: string) => {
+    if (!text) return null
+    const lines = text.split('\n')
+    const elements: React.ReactNode[] = []
+    let listItems: string[] = []
+
+    const flushList = () => {
+      if (listItems.length > 0) {
+        elements.push(
+          <ul key={`ul-${elements.length}`} className="space-y-4 mt-4 mb-6">
+            {listItems.map((item, i) => (
+              <li key={i} className="flex items-start gap-4">
+                <div className="mt-2.5 w-2 h-2 rounded-full bg-purple-500 shrink-0" />
+                <span className="text-slate-700 text-lg leading-relaxed">
+                  {renderInline(item)}
+                </span>
+              </li>
+            ))}
+          </ul>,
+        )
+        listItems = []
+      }
+    }
+
+    const renderInline = (str: string) => {
+      const parts = str.split(/(\*\*.*?\*\*)/g)
+      return parts.map((part, j) =>
+        part.startsWith('**') && part.endsWith('**') ? (
+          <strong key={j} className="font-extrabold text-navy">
+            {part.slice(2, -2)}
+          </strong>
+        ) : (
+          part
+        ),
+      )
+    }
+
+    lines.forEach((line, idx) => {
+      const trimmed = line.trim()
+      if (!trimmed) {
+        flushList()
+        return
+      }
+
+      if (trimmed.startsWith('## ')) {
+        flushList()
+        elements.push(
+          <h3
+            key={`h3-${idx}`}
+            className="text-2xl font-extrabold text-navy mt-8 mb-4 border-b-2 border-slate-100 pb-2"
+          >
+            {trimmed.replace('## ', '')}
+          </h3>,
+        )
+      } else if (trimmed.startsWith('- ')) {
+        listItems.push(trimmed.replace(/^- /, ''))
+      } else {
+        flushList()
+        elements.push(
+          <p
+            key={`p-${idx}`}
+            className="text-slate-700 text-lg leading-relaxed mb-4"
+          >
+            {renderInline(trimmed)}
+          </p>,
+        )
+      }
+    })
+
+    flushList()
+
+    return <div className="space-y-2">{elements}</div>
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-slate-50 pb-24">
       {showBadge && (
@@ -274,17 +349,27 @@ export default function AulaPremium() {
             </p>
           </div>
 
-          {/* Topics */}
+          {/* Topics / Content */}
           <div className="bg-white border-2 border-slate-200 border-b-4 rounded-2xl p-6 md:p-8">
             <div className="flex items-center gap-4 mb-6">
               <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center shrink-0 border border-purple-200">
-                <List className="w-6 h-6 text-purple-600" />
+                {aula.conteudo_markdown ? (
+                  <BookOpen className="w-6 h-6 text-purple-600" />
+                ) : (
+                  <List className="w-6 h-6 text-purple-600" />
+                )}
               </div>
               <h2 className="text-2xl font-extrabold text-navy">
-                Tópicos de Estudo
+                {aula.conteudo_markdown
+                  ? 'Material de Estudo'
+                  : 'Tópicos de Estudo'}
               </h2>
             </div>
-            <div className="md:ml-16">{renderTopicos(aula.topicos)}</div>
+            <div className="md:ml-16">
+              {aula.conteudo_markdown
+                ? renderMarkdown(aula.conteudo_markdown)
+                : renderTopicos(aula.topicos)}
+            </div>
           </div>
 
           {/* Actions */}
