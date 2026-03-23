@@ -49,9 +49,10 @@ export default function QuizPremium() {
 
   const finishQuiz = async (finalCorrects: number) => {
     const finalScore = Math.round((finalCorrects / perguntas.length) * 100)
-    setScore(finalScore)
+    const cappedScore = Math.min(finalScore, 100)
+    setScore(cappedScore)
 
-    if (finalScore >= 70 && user) {
+    if (cappedScore >= 70 && user) {
       try {
         const { data: existing } = await supabase
           .from('user_progress')
@@ -78,7 +79,7 @@ export default function QuizPremium() {
           await supabase
             .from('user_progress')
             .update({
-              quiz_score: Math.max(existing.quiz_score || 0, finalScore),
+              quiz_score: Math.max(existing.quiz_score || 0, cappedScore),
               xp_ganho:
                 (existing.xp_ganho || 0) +
                 (!existing || (existing.quiz_score || 0) < 70 ? 50 : 0),
@@ -88,7 +89,7 @@ export default function QuizPremium() {
           await supabase.from('user_progress').insert({
             user_id: user.id,
             aula_id: id,
-            quiz_score: finalScore,
+            quiz_score: cappedScore,
             xp_ganho: 50,
           })
         }
@@ -105,9 +106,8 @@ export default function QuizPremium() {
       setSelectedOp(null)
       setShowFeedback(false)
     } else {
-      finishQuiz(
-        selectedOp === perguntas[currentIdx].correta ? corrects + 1 : corrects,
-      )
+      // correctly pass accumulated exact corrects state
+      finishQuiz(corrects)
     }
   }
 
